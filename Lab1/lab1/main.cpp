@@ -8,24 +8,10 @@ using namespace std;
 const unsigned int SURNAME_LEN = 50;
 const unsigned int INITIALS_LEN = 3;
 
-struct Student
-{
-    char surname[SURNAME_LEN];
-    char initials[INITIALS_LEN];   // format as in Microsoft Office products (for example, Kanstancin Dzmitryjevic Novikau => Novikau KD)
-
-    unsigned short mark_physics;
-    unsigned short mark_maths;
-    unsigned short mark_informatics;
-    unsigned short mark_chemistry;
-
-    double average_mark;
-
-    static void updateAverage(Student& student)
-    {
-        double sum = student.mark_maths + student.mark_physics + student.mark_chemistry + student.mark_informatics;
-        student.average_mark = sum / 4;
-    }
-};
+// Struct of student and functions for work with this structure
+struct Student;
+void readStudent(Student &student);
+void printStudent(Student student);
 
 int safeReadInt(bool *ok = nullptr);
 int getChoice(int minimal, int maximal);
@@ -182,4 +168,77 @@ void goodbyeMessage()
 {
     printf("Goodbye! Have a nice day!\n");
     printf("Press Enter key to continue.\n");
+}
+
+struct Student
+{
+    char surname[SURNAME_LEN];
+    char initials[INITIALS_LEN];   // format as in Microsoft Office products (for example, Kanstancin Dzmitryjevic Novikau => Novikau KD)
+
+    unsigned short mark_physics;
+    unsigned short mark_maths;
+    unsigned short mark_informatics;
+    unsigned short mark_chemistry;
+
+    double average_mark;
+
+    static void updateAverage(Student& student)
+    {
+        double sum = student.mark_maths + student.mark_physics + student.mark_chemistry + student.mark_informatics;
+        student.average_mark = sum / 4;
+    }
+};
+
+void readStudent(Student &student)
+{
+    printf("*** reading student info ***\n\n");
+
+    printf("Surname: "); scanf("%s", student.surname);  // TODO: maybe change to safe scanfs
+    printf("Initials: "); scanf("%s", student.initials);
+
+    bool inner_ok = false;
+    while (!inner_ok)                   // TODO: maybe move to a separate function???
+    {
+        printf("Mark for physics: ");
+        student.mark_physics = safeReadInt(&inner_ok);
+        if (!inner_ok || student.mark_physics < 0 || student.mark_physics > 10)
+            printf("Please, input a value between 0 and 10 (inclusive)\n");
+    } inner_ok = false;
+
+    while (!inner_ok)
+    {
+        printf("Mark for maths: ");
+        student.mark_maths = safeReadInt(&inner_ok);
+        if (!inner_ok || student.mark_maths < 0 || student.mark_maths > 10)
+            printf("Please, input a value between 0 and 10 (inclusive)\n");
+    } inner_ok = false;
+
+    while (!inner_ok)
+    {
+        printf("Mark for chemistry: ");
+        student.mark_chemistry = safeReadInt(&inner_ok);
+        if (!inner_ok || student.mark_chemistry < 0 || student.mark_chemistry > 10)
+            printf("Please, input a value between 0 and 10 (inclusive)\n");
+    } inner_ok = false;
+
+    while (!inner_ok)
+    {
+        printf("Mark for informatics: ");
+        student.mark_informatics = safeReadInt(&inner_ok);
+        if (!inner_ok || student.mark_informatics < 0 || student.mark_informatics > 10)
+            printf("Please, input a value between 0 and 10 (inclusive)\n");
+    } inner_ok = false;
+
+    Student::updateAverage(student);
+}
+
+void printStudent(Student student)
+{
+    printf("Name: %s %s\n", student.surname, student.initials);
+    printf("Marks:\n");
+    printf("\tPhysics:     %d\n", student.mark_physics);
+    printf("\tMaths:       %d\n", student.mark_maths);
+    printf("\tChemistry:   %d\n", student.mark_chemistry);
+    printf("\tInformatics: %d\n\n", student.mark_informatics);
+    printf("\tAverage:     %f\n", student.average_mark);
 }
