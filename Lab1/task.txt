@@ -20,5 +20,3 @@
 > Load file
 > Save to file
 > Quit
-
-test git hook
