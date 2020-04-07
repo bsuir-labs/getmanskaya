@@ -189,7 +189,7 @@ struct Student
     }
 };
 
-void readStudent(Student &student)
+void readStudent(Student &student)                      // TODO: refactor
 {
     printf("*** reading student info ***\n\n");
 
