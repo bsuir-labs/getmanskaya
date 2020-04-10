@@ -8,7 +8,7 @@
 using namespace std;
 
 const unsigned int SURNAME_LEN = 50;
-const unsigned int INITIALS_LEN = 3;
+const unsigned int INITIALS_LEN = 5;
 
 const char DATABASE_FILENAME[] = "students.dat";
 
@@ -196,7 +196,27 @@ void showAllRecords()
 
 void correctRecord()
 {
-    unimplemented();
+    Student* students = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&students);
+    unsigned size = bytes / sizeof(Student);
+
+    // Print names only
+    for (unsigned i = 0; i < size; ++i)
+        printf("%3d:\t%s %s\n", i, students[i].surname, students[i].initials);
+
+    printf("Specify number to correct: ");
+    int numberToCorrect = -1;
+    bool ok = false;
+    while (!ok || numberToCorrect < 0 || numberToCorrect >= int(size))
+        numberToCorrect = safeReadInt(&ok);
+
+    printStudent(students[numberToCorrect]);
+    printf("Specify new values:\n");
+    readStudent(students[numberToCorrect]);
+
+    writeToFile(DATABASE_FILENAME, (char*)students, size * sizeof(Student));
+
+    delete[] students;
 }
 
 void individualTask()
