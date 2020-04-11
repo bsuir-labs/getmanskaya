@@ -3,7 +3,6 @@
 #include <climits>
 #include <assert.h>
 #include <stdio.h>
-#include <sys/io.h>     // TODO: pay attention! This is for *nix only
 
 using namespace std;
 
@@ -17,7 +16,7 @@ const char OUTPUT_FILENAME[] = "output.txt";
 struct Student
 {
     char surname[SURNAME_LEN];
-    char initials[INITIALS_LEN];   // format as in Microsoft Office products (for example, Kanstancin Dzmitryjevic Novikau => Novikau KD)
+    char initials[INITIALS_LEN];
 
     unsigned short birth_year;
 
@@ -27,21 +26,15 @@ struct Student
     unsigned short mark_chemistry;
 
     double average_mark;
-
-    static void updateAverage(Student& student)
-    {
-        double sum = student.mark_maths + student.mark_physics + student.mark_chemistry + student.mark_informatics;
-        student.average_mark = sum / 4;
-    }
 };
 void readStudent(Student &student);
 void printStudent(Student student);
 void fprintStudent(Student student, FILE* stream);
 
 int safeReadInt(bool *ok = nullptr);
+int rangeReadInt(int minimal, int maximal, const char* prompt);
 int safeReadString(char* buffer, unsigned maxLength);
 char safeGetChar();
-void clearInputBuffer();
 int getChoice(int minimal, int maximal);
 
 // Menu choice functions
@@ -61,9 +54,6 @@ void appendToFile(const char filename[], const char* data, unsigned size);
 void writeToFile(const char filename[], const char* data, unsigned size);
 unsigned readFile(const char filename[], char** buffer, unsigned maxSize = 0);
 unsigned filelength(FILE* file);
-
-// Temp debug functions
-void unimplemented();
 
 int main()
 {
@@ -91,17 +81,6 @@ int main()
     return 0;
 }
 
-void unimplemented()
-{
-    printf("Sorry, this function is not implemented yet!\n");
-}
-
-void clearInputBuffer()
-{
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF) { }
-}
-
 int safeReadInt(bool* ok)
 {
     static const unsigned int LINE_SIZE = 255;
@@ -127,6 +106,23 @@ int safeReadInt(bool* ok)
     }
 
     return result * sign;
+}
+
+int rangeReadInt(int minimal, int maximal, const char *prompt)
+{
+    bool ok = false;
+    int result = 0;
+    while (!ok)
+    {
+        printf("%s", prompt);
+        result = safeReadInt(&ok);
+        if (!ok || result < minimal || result > maximal)
+        {
+            printf("Please, input a value between %d and %d (inclusive)\n", minimal, maximal);
+            ok = false;
+        }
+    }
+    return result;
 }
 
 int safeReadString(char* buffer, unsigned maxLength)
@@ -307,53 +303,14 @@ void readStudent(Student &student)                      // TODO: refactor
     printf("Initials: ");
     safeReadString(student.initials, INITIALS_LEN);
 
-    bool inner_ok = false;
+    student.birth_year = rangeReadInt(1990, 2020, "Birth year: ");
+    student.mark_physics = rangeReadInt(0, 10, "Mark for physics: ");
+    student.mark_maths = rangeReadInt(0, 10, "Mark for maths: ");
+    student.mark_chemistry = rangeReadInt(0, 10, "Mark for chemistry: ");
+    student.mark_informatics = rangeReadInt(0, 10, "Mark for informatics: ");
 
-    while (!inner_ok)
-    {
-        printf("Birth year: ");
-        student.birth_year = safeReadInt(&inner_ok);
-        if (!inner_ok || student.birth_year < 1990 || student.birth_year > 2020)
-        {
-            printf("Please, input a value between 1990 and 2020 (inclusive)\n");
-            inner_ok = false;
-        }
-    } inner_ok = false;
-
-
-    while (!inner_ok)                   // TODO: maybe move to a separate function???
-    {
-        printf("Mark for physics: ");
-        student.mark_physics = safeReadInt(&inner_ok);
-        if (!inner_ok || student.mark_physics < 0 || student.mark_physics > 10)
-            printf("Please, input a value between 0 and 10 (inclusive)\n");
-    } inner_ok = false;
-
-    while (!inner_ok)
-    {
-        printf("Mark for maths: ");
-        student.mark_maths = safeReadInt(&inner_ok);
-        if (!inner_ok || student.mark_maths < 0 || student.mark_maths > 10)
-            printf("Please, input a value between 0 and 10 (inclusive)\n");
-    } inner_ok = false;
-
-    while (!inner_ok)
-    {
-        printf("Mark for chemistry: ");
-        student.mark_chemistry = safeReadInt(&inner_ok);
-        if (!inner_ok || student.mark_chemistry < 0 || student.mark_chemistry > 10)
-            printf("Please, input a value between 0 and 10 (inclusive)\n");
-    } inner_ok = false;
-
-    while (!inner_ok)
-    {
-        printf("Mark for informatics: ");
-        student.mark_informatics = safeReadInt(&inner_ok);
-        if (!inner_ok || student.mark_informatics < 0 || student.mark_informatics > 10)
-            printf("Please, input a value between 0 and 10 (inclusive)\n");
-    } inner_ok = false;
-
-    Student::updateAverage(student);
+    student.average_mark = (student.mark_maths + student.mark_physics +
+                            student.mark_chemistry + student.mark_informatics) / 4.0;
 }
 
 void printStudent(Student student)
