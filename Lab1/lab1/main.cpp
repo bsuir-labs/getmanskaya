@@ -36,6 +36,7 @@ void printStudent(Student student);
 
 int safeReadInt(bool *ok = nullptr);
 int safeReadString(char* buffer, unsigned maxLength);
+char safeGetChar();
 void clearInputBuffer();
 int getChoice(int minimal, int maximal);
 
@@ -135,6 +136,14 @@ int safeReadString(char* buffer, unsigned maxLength)
     return size;
 }
 
+char safeGetChar()
+{
+    char buffer[255];
+    fgets(buffer, 254, stdin);
+    if (strlen(buffer) > 1) return buffer[0];
+    return '\0';
+}
+
 int getChoice(int minimal, int maximal)
 {
     bool ok;
@@ -230,7 +239,29 @@ void correctRecord()
 
 void individualTask()
 {
-    unimplemented();
+    printf("*** INDIVIDUAL TASK ***\n");
+    printf("\nSpecify the letter you want to start with: ");
+    char letter = safeGetChar();
+
+    printf("Filtering students according to rule:\n");
+    printf("Average mark is larger than 8 and the surname starts with %c\n", letter);
+
+    Student* students = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&students);
+    unsigned size = bytes / sizeof(Student);
+
+    bool found = false;
+    for (unsigned i = 0; i < size; ++i)
+        if (students[i].surname[0] == letter && students[i].average_mark > 8)
+        {
+            printStudent(students[i]);
+            found = true;
+        }
+
+    if (!found)
+        printf("No users found.\n");
+
+    delete[] students;
 }
 
 void loadFile()
