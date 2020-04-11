@@ -11,6 +11,7 @@ const unsigned int SURNAME_LEN = 50;
 const unsigned int INITIALS_LEN = 5;
 
 const char DATABASE_FILENAME[] = "students.dat";
+const char OUTPUT_FILENAME[] = "output.txt";
 
 // Struct of student and functions for work with this structure
 struct Student
@@ -33,6 +34,7 @@ struct Student
 };
 void readStudent(Student &student);
 void printStudent(Student student);
+void fprintStudent(Student student, FILE* stream);
 
 int safeReadInt(bool *ok = nullptr);
 int safeReadString(char* buffer, unsigned maxLength);
@@ -48,9 +50,7 @@ void createNewRecord(); // 1 - create new record
 void showAllRecords();  // 2 - show all records
 void correctRecord();   // 3 - correct record
 void individualTask();  // 4 - individual task
-void loadFile();        // 5 - load data from file
-void saveToFile();      // 6 - save data to file
-void goodbyeMessage();  // 7 - Quit
+void goodbyeMessage();  // 5 - Quit
 
 // Functions for files
 void createFile(const char filename[]);
@@ -67,6 +67,8 @@ int main()
 {
     bool stopRequested = false;
 
+    createFile(OUTPUT_FILENAME);    // reset output file
+
     while (!stopRequested)
     {
         switch (getMainMenuChoice())
@@ -75,9 +77,7 @@ int main()
         case 2: showAllRecords(); break;
         case 3: correctRecord(); break;
         case 4: individualTask(); break;
-        case 5: loadFile(); break;
-        case 6: saveToFile(); break;
-        case 7:
+        case 5:
             stopRequested = true;
             goodbyeMessage();
             break;
@@ -164,8 +164,6 @@ int getMainMenuChoice()
     printf("%6d | Show all records\n", ++point);
     printf("%6d | Correct record\n", ++point);
     printf("%6d | Individual task\n", ++point);
-    printf("%6d | Load file\n", ++point);
-    printf("%6d | Save to file\n", ++point);
     printf("%6d | Quit\n", ++point);
 
     bool ok = false;
@@ -206,6 +204,18 @@ void showAllRecords()
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&students);
     unsigned size = bytes / sizeof(Student);
 
+    FILE* output = fopen(OUTPUT_FILENAME, "a");
+    if (output)
+    {
+        for (unsigned i = 0; i < size; ++i)
+            fprintStudent(students[i], output);
+        fclose(output);
+    }
+    else
+    {
+        printf("Couldn't open %s file for writing (appending)\n", OUTPUT_FILENAME);
+    }
+
     for (unsigned i = 0; i < size; ++i)
         printStudent(students[i]);
 
@@ -239,12 +249,23 @@ void correctRecord()
 
 void individualTask()
 {
+    FILE* output = fopen(OUTPUT_FILENAME, "a");
+    if (!output) printf("Couldn't open %s for writing\n", OUTPUT_FILENAME);
+
     printf("*** INDIVIDUAL TASK ***\n");
     printf("\nSpecify the letter you want to start with: ");
+
     char letter = safeGetChar();
 
     printf("Filtering students according to rule:\n");
     printf("Average mark is larger than 8 and the surname starts with %c\n", letter);
+
+    if (output)
+    {
+        fprintf(output, "*** INDIVIDUAL TASK ***\n");
+        fprintf(output, "Filtering students according to rule:\n");
+        fprintf(output, "Average mark is larger than 8 and the surname starts with %c\n", letter);
+    }
 
     Student* students = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&students);
@@ -255,23 +276,18 @@ void individualTask()
         if (students[i].surname[0] == letter && students[i].average_mark > 8)
         {
             printStudent(students[i]);
+            if (output) fprintStudent(students[i], output);
             found = true;
         }
 
     if (!found)
+    {
         printf("No users found.\n");
+        if (output) fprintf(output, "No users found.\n");
+    }
 
+    if (output) fclose(output);
     delete[] students;
-}
-
-void loadFile()
-{
-    unimplemented();
-}
-
-void saveToFile()
-{
-    unimplemented();
 }
 
 void goodbyeMessage()
@@ -327,13 +343,18 @@ void readStudent(Student &student)                      // TODO: refactor
 
 void printStudent(Student student)
 {
-    printf("Name: %s %s\n", student.surname, student.initials);
-    printf("Marks:\n");
-    printf("\tPhysics:     %d\n", student.mark_physics);
-    printf("\tMaths:       %d\n", student.mark_maths);
-    printf("\tChemistry:   %d\n", student.mark_chemistry);
-    printf("\tInformatics: %d\n\n", student.mark_informatics);
-    printf("\tAverage:     %f\n", student.average_mark);
+    fprintStudent(student, stdout);
+}
+
+void fprintStudent(Student student, FILE* stream)
+{
+    fprintf(stream, "Name: %s %s\n", student.surname, student.initials);
+    fprintf(stream, "Marks:\n");
+    fprintf(stream, "\tPhysics:     %d\n", student.mark_physics);
+    fprintf(stream, "\tMaths:       %d\n", student.mark_maths);
+    fprintf(stream, "\tChemistry:   %d\n", student.mark_chemistry);
+    fprintf(stream, "\tInformatics: %d\n\n", student.mark_informatics);
+    fprintf(stream, "\tAverage:     %f\n", student.average_mark);
 }
 
 void createFile(const char filename[])
