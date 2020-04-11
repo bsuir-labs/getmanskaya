@@ -35,6 +35,7 @@ void readStudent(Student &student);
 void printStudent(Student student);
 
 int safeReadInt(bool *ok = nullptr);
+int safeReadString(char* buffer, unsigned maxLength);
 void clearInputBuffer();
 int getChoice(int minimal, int maximal);
 
@@ -108,7 +109,6 @@ int safeReadInt(bool* ok)
 
     // get the whole line
     fgets(lineBuffer, LINE_SIZE, stdin);
-    //clearInputBuffer();
     int lineSize = strlen(lineBuffer);
 
     // parse the buffer
@@ -124,6 +124,15 @@ int safeReadInt(bool* ok)
     }
 
     return result * sign;
+}
+
+int safeReadString(char* buffer, unsigned maxLength)
+{
+    fgets(buffer, maxLength, stdin);
+    // sanitize
+    int size = strlen(buffer);
+    while (size > 1 && buffer[size - 1] == '\n') buffer[size-- -1] = '\0';
+    return size;
 }
 
 int getChoice(int minimal, int maximal)
@@ -245,13 +254,9 @@ void readStudent(Student &student)                      // TODO: refactor
     printf("*** reading student info ***\n\n");
 
     printf("Surname: ");
-    fgets(student.surname, SURNAME_LEN, stdin);
-//    scanf("%s", student.surname);  // TODO: maybe change to safe scanfs
-    //clearInputBuffer();
+    safeReadString(student.surname, SURNAME_LEN);
     printf("Initials: ");
-    fgets(student.initials, INITIALS_LEN, stdin);
-//    scanf("%s", student.initials);
-    //clearInputBuffer();
+    safeReadString(student.initials, INITIALS_LEN);
 
     bool inner_ok = false;
     while (!inner_ok)                   // TODO: maybe move to a separate function???
