@@ -157,7 +157,26 @@ void menu_CorrectRecord()
 
 void menu_LinearSearch()
 {
-    printf("unimplemented.\n");
+    Cargo *cargos = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
+    unsigned size = bytes / sizeof(Cargo);
+
+    printf("Specify title to search for: ");
+    char title[50];
+    safeReadString(title, 49);
+
+    printf("Searching for items with title: %s\n", title);
+
+    bool found = false;
+    for (unsigned i = 0; i < size; ++i)
+        if (strcmp(title, cargos[i].title) == 0)
+        {
+            printCargo(cargos[i]);
+            found = true;
+        }
+    if (!found) printf("No items found.\n");
+
+    delete[] cargos;
 }
 
 void menu_SelectionSort()
