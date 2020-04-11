@@ -19,6 +19,8 @@ struct Student
     char surname[SURNAME_LEN];
     char initials[INITIALS_LEN];   // format as in Microsoft Office products (for example, Kanstancin Dzmitryjevic Novikau => Novikau KD)
 
+    unsigned short birth_year;
+
     unsigned short mark_physics;
     unsigned short mark_maths;
     unsigned short mark_informatics;
@@ -306,6 +308,19 @@ void readStudent(Student &student)                      // TODO: refactor
     safeReadString(student.initials, INITIALS_LEN);
 
     bool inner_ok = false;
+
+    while (!inner_ok)
+    {
+        printf("Birth year: ");
+        student.birth_year = safeReadInt(&inner_ok);
+        if (!inner_ok || student.birth_year < 1990 || student.birth_year > 2020)
+        {
+            printf("Please, input a value between 1990 and 2020 (inclusive)\n");
+            inner_ok = false;
+        }
+    } inner_ok = false;
+
+
     while (!inner_ok)                   // TODO: maybe move to a separate function???
     {
         printf("Mark for physics: ");
@@ -348,13 +363,15 @@ void printStudent(Student student)
 
 void fprintStudent(Student student, FILE* stream)
 {
-    fprintf(stream, "Name: %s %s\n", student.surname, student.initials);
+    fprintf(stream, "Name:      \t%s %s\n", student.surname, student.initials);
+    fprintf(stream, "Birth year:\t%d\n", student.birth_year);
     fprintf(stream, "Marks:\n");
     fprintf(stream, "\tPhysics:     %d\n", student.mark_physics);
     fprintf(stream, "\tMaths:       %d\n", student.mark_maths);
     fprintf(stream, "\tChemistry:   %d\n", student.mark_chemistry);
     fprintf(stream, "\tInformatics: %d\n\n", student.mark_informatics);
     fprintf(stream, "\tAverage:     %f\n", student.average_mark);
+    fprintf(stream, "\n");
 }
 
 void createFile(const char filename[])
