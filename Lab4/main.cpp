@@ -183,8 +183,25 @@ void menu_SortMethod_1(Stack** stack)
 
 void menu_SortMethod_2(Stack** stack)
 {
-    ((void)stack);
-    printf("unimplemented yet\n");
+    if (!*stack)
+    {
+        printf("Can't sort empty stack.\n");
+        return;
+    }
+
+    Stack* last_checked = nullptr, *cur;
+    do {
+        for (cur = *stack; cur->next != last_checked; cur = cur->next)
+            if (cur->value > cur->next->value)
+            {
+                int tmp = cur->value;
+                cur->value = cur->next->value;
+                cur->next->value = tmp;
+            }
+        last_checked = cur;
+    } while ((*stack)->next != last_checked);
+
+    printf("Stack sorted using method 2.\n");
 }
 
 void menu_IndividualTask(Stack** stack)
