@@ -46,6 +46,8 @@ void menu_SelectionSort();
 void menu_QuickSort();
 void menu_BinarySearch();
 
+void selectionSort(Cargo* array, unsigned size);
+void quickSort(Cargo* array, int left, int right);
 
 void readCargo(Cargo &cargo);
 void printCargo(Cargo cargo);
@@ -181,7 +183,24 @@ void menu_LinearSearch()
 
 void menu_SelectionSort()
 {
-    printf("unimplemented.\n");
+    Cargo *cargos = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
+    unsigned size = bytes / sizeof(Cargo);
+
+    printf("File state before Selection sort:\n");
+    for (unsigned i = 0; i < size; ++i)
+        printf("%3d:\t%s\n", i, cargos[i].title);
+    printf("\n");
+
+    selectionSort(cargos, size);
+
+    printf("File state after Selection sort:\n");
+    for (unsigned i = 0; i < size; ++i)
+        printf("%3d:\t%s\n", i, cargos[i].title);
+    printf("\n");
+
+    writeToFile(DATABASE_FILENAME, (char*)cargos, size * sizeof(Cargo));
+    delete[] cargos;
 }
 
 void menu_QuickSort()
@@ -192,6 +211,23 @@ void menu_QuickSort()
 void menu_BinarySearch()
 {
     printf("unimplemented.\n");
+}
+
+void selectionSort(Cargo* array, unsigned size)
+{
+    for (unsigned i = 0; i < size - 1; ++i)
+    {
+        unsigned min_index = i;
+        for (unsigned j = i + 1; j < size; ++j)
+            if (strcmp(array[min_index].title, array[j].title) > 0)
+                min_index = j;
+        if (min_index != i)
+        {
+            Cargo tmp = array[min_index];
+            array[min_index] = array[i];
+            array[i] = tmp;
+        }
+    }
 }
 
 void readCargo(Cargo &cargo)
