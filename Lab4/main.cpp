@@ -206,8 +206,27 @@ void menu_SortMethod_2(Stack** stack)
 
 void menu_IndividualTask(Stack** stack)
 {
-    ((void)stack);
-    printf("unimplemented yet\n");
+    printf("*** INDIVIDUAL TASK ***\n\n");
+    printf("Remove even numbers from stack.\n");
+
+    Stack* prev = nullptr, *cur = *stack;
+    while (cur != nullptr) // while (cur) is also a possible option
+        if (cur->value % 2 == 0)    // it should be removed
+        {
+            Stack* tmp = cur->next;
+            if (prev != nullptr)    // This is not the first element in stack
+                prev->next = tmp;   // Moving pointer from previous element to get current element around
+            else                    // This is the first element in stack
+                *stack = tmp;       // Then we just should move the beginning of the stack forward
+
+            delete cur;             // Delete unnecessary element
+            cur = tmp;              // Move current pointer
+        } else {
+            prev = cur;             // Nothing should happen
+            cur = cur->next;        // Just moving on
+        }
+
+    printf("Done!\n");
 }
 
 int safeReadInt(bool* ok)
