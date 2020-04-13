@@ -48,6 +48,7 @@ void menu_BinarySearch();
 
 void selectionSort(Cargo* array, unsigned size);
 void quickSort(Cargo* array, int left, int right);
+int binarySearch(Cargo* array, unsigned size, const char title[]);
 
 void readCargo(Cargo &cargo);
 void printCargo(Cargo cargo);
@@ -205,12 +206,41 @@ void menu_SelectionSort()
 
 void menu_QuickSort()
 {
-    printf("unimplemented.\n");
+    Cargo *cargos = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
+    unsigned size = bytes / sizeof(Cargo);
+
+    printf("File state before Quick sort:\n");
+    for (unsigned i = 0; i < size; ++i)
+        printf("%3d:\t%s\n", i, cargos[i].title);
+
+    quickSort(cargos, 0, size - 1);
+
+    printf("File state after Quick sort:\n");
+    for (unsigned i = 0; i < size; ++i)
+        printf("%3d:\t%s\n", i, cargos[i].title);
+
+    writeToFile(DATABASE_FILENAME, (char*)cargos, size * sizeof(Cargo));
+    delete[] cargos;
 }
 
 void menu_BinarySearch()
 {
-    printf("unimplemented.\n");
+    Cargo *cargos = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
+    unsigned size = bytes / sizeof(Cargo);
+
+    printf("Specify title to search for: ");
+    char title[50];
+    safeReadString(title, 49);
+
+    int index = binarySearch(cargos, size, title);
+    if (index != -1)
+        printCargo(cargos[index]);
+    else
+        printf("No items found.\n");
+
+    delete[] cargos;
 }
 
 void selectionSort(Cargo* array, unsigned size)
@@ -228,6 +258,43 @@ void selectionSort(Cargo* array, unsigned size)
             array[i] = tmp;
         }
     }
+}
+
+void quickSort(Cargo* array, int left, int right)
+{
+    char buffer[TITLE_LEN + 1]; // buffer for comparison
+    int l = left, r = right;
+    strcpy(buffer, array[(l + r) / 2].title);
+    do {
+        while (strcmp(array[l].title, buffer) < 0) ++l;
+        while (strcmp(array[r].title, buffer) > 0) --r;
+        if (l <= r)
+        {
+            Cargo tmp = array[l];
+            array[l] = array[r];
+            array[r] = tmp;
+            ++l;
+            --r;
+        }
+    } while (l <= r);
+    if (left < r) quickSort(array, left, r);
+    if (l < right) quickSort(array, l, right);
+}
+
+int binarySearch(Cargo* array, unsigned size, const char title[])
+{
+    int result = -1;    // -1 means "nothing was found"
+    int l = 0, r = size - 1, mid;
+    while (l < r)
+    {
+        mid = (l + r) / 2;
+        if (strcmp(title, array[mid].title) > 0)
+            l = mid + 1;
+        else
+            r = mid;
+    }
+    if (strcmp(title, array[l].title) == 0) result = l;
+    return result;
 }
 
 void readCargo(Cargo &cargo)
