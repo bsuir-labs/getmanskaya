@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 114
   Width = 783
   Height = 540
-  Caption = 'Form1'
+  Caption = 'Trees'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,9 +15,9 @@ object Form1: TForm1
   TextHeight = 13
   object PrintArea: TMemo
     Left = 16
-    Top = 216
+    Top = 168
     Width = 737
-    Height = 281
+    Height = 329
     Lines.Strings = (
       'PrintArea')
     TabOrder = 0
