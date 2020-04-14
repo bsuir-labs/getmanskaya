@@ -35,15 +35,16 @@ void TForm1::updateTreeView()
 }
 //---------------------------------------------------------------------------
 
-BSUIR::Tree* BSUIR::InitTree(int value)
+BSUIR::Tree* BSUIR::InitTree(int value, String caption)
 {
     Tree* root = new Tree;
     root->value = value;
+    root->caption = caption;
     root->left = root->right = NULL;
     return root;
 }
 
-void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value)
+void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value, String caption)
 {
     Tree *cur = root, *prev = NULL;
     while (cur)
@@ -57,7 +58,7 @@ void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value)
     }
     if (!cur)
     {
-        cur = InitTree(value);
+        cur = InitTree(value, caption);
         if (value > prev->value)
             prev->right = cur;
         else
@@ -71,7 +72,7 @@ std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool is
 
    if (root != NULL)
    {
-       String row = prefix + "+--" + IntToStr(root->value);
+       String row = prefix + "+--[" + IntToStr(root->value) + "] " + root->caption;
        res.push_back(row);
 
        std::vector<String> left = GetTreeView(root->left, prefix + (isLeft ? "|   " : "    "), true);
@@ -92,11 +93,12 @@ std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool is
 void __fastcall TForm1::AppendButtonClick(TObject *Sender)
 {
     ((void)Sender);
-    int value = StrToInt(this->NewElementEdit->Text);
+    int value = StrToInt(this->newKeyEdit->Text);
+    String caption = this->newValueEdit->Text;
     if (!treeIsInited())
-       root = BSUIR::InitTree(value);
+       root = BSUIR::InitTree(value, caption);
     else
-        BSUIR::InsertIntoTree(root, value);
+        BSUIR::InsertIntoTree(root, value, caption);
 
     this->updateTreeView();
 }

@@ -10,6 +10,7 @@ WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     try
     {
          Application->Initialize();
+         Application->Title = "Trees Laboratory work";
          Application->CreateForm(__classid(TForm1), &Form1);
          Application->Run();
     }
