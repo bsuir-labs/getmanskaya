@@ -25,6 +25,10 @@ struct Tree
 /// and initializing it with a value
 Tree* InitTree(int value, String caption);
 void InsertIntoTree(Tree *root, int value, String caption);
+/// Returns a pointer to a node with the specified key
+/// If not found, returns NULL
+Tree* FindNodeByKey(Tree *root, int key);
+bool RemoveFromTree(Tree **root, int key);
 std::vector<String> GetTreeView(Tree *root, String prefix = "", bool isLeft = false);
 
 }
@@ -42,7 +46,11 @@ __published:	// IDE-managed Components
     TButton *findAndPrintButton;
     TLabeledEdit *findKeyEdit;
     TButton *findAndEraseButton;
+    TMemo *searchResultsArea;
+    TLabel *searchResultsLabel;
     void __fastcall AppendButtonClick(TObject *Sender);
+    void __fastcall findAndPrintButtonClick(TObject *Sender);
+    void __fastcall findAndEraseButtonClick(TObject *Sender);
 private:	// User declarations
     BSUIR::Tree *root;     // Root of our tree
 

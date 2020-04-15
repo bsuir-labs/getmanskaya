@@ -70,10 +70,17 @@ object Form1: TForm1
   object findGroupBox: TGroupBox
     Left = 224
     Top = 8
-    Width = 185
+    Width = 401
     Height = 153
     Caption = 'Search'
     TabOrder = 2
+    object searchResultsLabel: TLabel
+      Left = 184
+      Top = 24
+      Width = 70
+      Height = 13
+      Caption = 'Search results:'
+    end
     object findAndPrintButton: TButton
       Left = 56
       Top = 80
@@ -81,6 +88,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Print info'
       TabOrder = 0
+      OnClick = findAndPrintButtonClick
     end
     object findKeyEdit: TLabeledEdit
       Left = 16
@@ -107,6 +115,14 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
       TabOrder = 2
+      OnClick = findAndEraseButtonClick
+    end
+    object searchResultsArea: TMemo
+      Left = 184
+      Top = 40
+      Width = 201
+      Height = 97
+      TabOrder = 3
     end
   end
 end

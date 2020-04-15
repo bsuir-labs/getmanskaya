@@ -66,6 +66,70 @@ void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value, String caption)
     }
 }
 
+BSUIR::Tree* BSUIR::FindNodeByKey(BSUIR::Tree *root, int key)
+{
+    Tree *ptr = root;
+    while (ptr)
+    {
+        if (ptr->value == key) break;
+        if (key > ptr->value)
+            ptr = ptr->right;
+        else
+            ptr = ptr->left;
+    }
+    return ptr;
+}
+
+bool BSUIR::RemoveFromTree(BSUIR::Tree **root, int key)
+{
+    Tree *toBeRemoved, *prevRemoved;
+    Tree *swapNode, *prevSwapNode;
+    toBeRemoved = *root;
+    prevRemoved = NULL;
+    while (toBeRemoved && toBeRemoved->value != key)
+    {
+        prevRemoved = toBeRemoved;
+        if (key > toBeRemoved->value)
+            toBeRemoved = toBeRemoved->right;
+        else
+            toBeRemoved = toBeRemoved->left;
+    }
+    if (!toBeRemoved) return false;
+
+    if (toBeRemoved->right == NULL)
+        swapNode = toBeRemoved->left;
+    else if (toBeRemoved->left == NULL)
+        swapNode = toBeRemoved->right;
+    else
+    {
+        prevSwapNode = toBeRemoved;
+        swapNode = toBeRemoved->left;
+        while (swapNode->right != NULL)
+        {
+            prevSwapNode = swapNode;
+            swapNode = swapNode->right;
+        }
+        if (prevSwapNode == toBeRemoved) swapNode->right = toBeRemoved->right;
+        else
+        {
+            swapNode->right = toBeRemoved->right;
+            prevSwapNode->right = swapNode->left;
+            swapNode->left = prevSwapNode;
+        }
+    }
+
+    if (toBeRemoved == *root) *root = swapNode;
+    else
+    {
+        if (toBeRemoved->value < prevRemoved->value)
+            prevRemoved->left = swapNode;
+        else
+            prevRemoved->right = swapNode;
+    }
+    delete toBeRemoved;
+    return true;
+}
+
 std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool isLeft)
 {
    std::vector<String> res;
@@ -99,6 +163,50 @@ void __fastcall TForm1::AppendButtonClick(TObject *Sender)
        root = BSUIR::InitTree(value, caption);
     else
         BSUIR::InsertIntoTree(root, value, caption);
+
+    this->updateTreeView();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::findAndPrintButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+
+    this->searchResultsArea->Lines->Clear();
+
+    int key = StrToInt(this->findKeyEdit->Text);
+    BSUIR::Tree *node = BSUIR::FindNodeByKey(root, key);
+    if (node)
+    {
+        String firstRow = "Found:";
+        String secondRow = "Key:\t" + IntToStr(node->value);
+        String thirdRow = "Value:\t" + node->caption;
+        this->searchResultsArea->Lines->Add(firstRow);
+        this->searchResultsArea->Lines->Add(secondRow);
+        this->searchResultsArea->Lines->Add(thirdRow);
+    }
+    else
+    {
+        this->searchResultsArea->Lines->Add("No such key in tree :c");
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::findAndEraseButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+
+    this->searchResultsArea->Lines->Clear();
+
+    int key = StrToInt(this->findKeyEdit->Text);
+    bool result = BSUIR::RemoveFromTree(&root, key);
+
+    String output;
+    if (result)
+        output = "Removed successfully";
+    else
+        output = "No such key in tree :c");
+    this->searchResultsArea->Lines->Add(output);
 
     this->updateTreeView();
 }
