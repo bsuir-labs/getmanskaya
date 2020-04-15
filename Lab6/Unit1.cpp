@@ -33,6 +33,16 @@ void TForm1::updateTreeView()
     for (size_t i = 0; i < rows.size(); ++i)
         this->PrintArea->Lines->Add(rows[i]);
 }
+
+void TForm1::clearOutput()
+{
+    this->searchResultsArea->Lines->Clear();
+}
+
+void TForm1::printToOutput(const String &str)
+{
+    this->searchResultsArea->Lines->Add(str);
+}
 //---------------------------------------------------------------------------
 
 BSUIR::Tree* BSUIR::InitTree(int value, String caption)
@@ -205,7 +215,7 @@ void __fastcall TForm1::findAndEraseButtonClick(TObject *Sender)
     if (result)
         output = "Removed successfully";
     else
-        output = "No such key in tree :c");
+        output = "No such key in tree :c";
     this->searchResultsArea->Lines->Add(output);
 
     this->updateTreeView();

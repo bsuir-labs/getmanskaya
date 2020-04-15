@@ -48,6 +48,15 @@ __published:	// IDE-managed Components
     TButton *findAndEraseButton;
     TMemo *searchResultsArea;
     TLabel *searchResultsLabel;
+    TGroupBox *printGroupBox;
+    TGroupBox *controlsGroupBox;
+    TButton *preorderButton;
+    TButton *postorderButton;
+    TButton *inorderButton;
+    TButton *rebalanceButton;
+    TButton *deleteButton;
+    TButton *leavesButton;
+    TLabel *treeLabel;
     void __fastcall AppendButtonClick(TObject *Sender);
     void __fastcall findAndPrintButtonClick(TObject *Sender);
     void __fastcall findAndEraseButtonClick(TObject *Sender);
@@ -57,6 +66,9 @@ private:	// User declarations
     bool treeIsInited() const;
 
     void updateTreeView();
+
+    void clearOutput();
+    void printToOutput(const String &str);
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);
 };

@@ -1,9 +1,11 @@
 object Form1: TForm1
   Left = 192
   Top = 114
-  Width = 783
-  Height = 540
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
   Caption = 'Trees'
+  ClientHeight = 506
+  ClientWidth = 836
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,11 +15,25 @@ object Form1: TForm1
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object PrintArea: TMemo
+  object searchResultsLabel: TLabel
     Left = 16
-    Top = 168
-    Width = 737
-    Height = 329
+    Top = 304
+    Width = 35
+    Height = 13
+    Caption = 'Output:'
+  end
+  object treeLabel: TLabel
+    Left = 416
+    Top = 16
+    Width = 98
+    Height = 13
+    Caption = 'Tree representation :'
+  end
+  object PrintArea: TMemo
+    Left = 416
+    Top = 32
+    Width = 409
+    Height = 465
     Lines.Strings = (
       'PrintArea')
     TabOrder = 0
@@ -68,19 +84,12 @@ object Form1: TForm1
     end
   end
   object findGroupBox: TGroupBox
-    Left = 224
+    Left = 216
     Top = 8
-    Width = 401
+    Width = 185
     Height = 153
     Caption = 'Search'
     TabOrder = 2
-    object searchResultsLabel: TLabel
-      Left = 184
-      Top = 24
-      Width = 70
-      Height = 13
-      Caption = 'Search results:'
-    end
     object findAndPrintButton: TButton
       Left = 56
       Top = 80
@@ -117,12 +126,76 @@ object Form1: TForm1
       TabOrder = 2
       OnClick = findAndEraseButtonClick
     end
-    object searchResultsArea: TMemo
-      Left = 184
-      Top = 40
-      Width = 201
-      Height = 97
-      TabOrder = 3
+  end
+  object searchResultsArea: TMemo
+    Left = 16
+    Top = 320
+    Width = 385
+    Height = 177
+    TabOrder = 3
+  end
+  object printGroupBox: TGroupBox
+    Left = 16
+    Top = 168
+    Width = 185
+    Height = 129
+    Caption = 'Print'
+    TabOrder = 4
+    object preorderButton: TButton
+      Left = 16
+      Top = 24
+      Width = 153
+      Height = 25
+      Caption = 'Pre-order traversal'
+      TabOrder = 0
+    end
+    object postorderButton: TButton
+      Left = 16
+      Top = 56
+      Width = 153
+      Height = 25
+      Caption = 'Post-order traversal'
+      TabOrder = 1
+    end
+    object inorderButton: TButton
+      Left = 16
+      Top = 88
+      Width = 153
+      Height = 25
+      Caption = 'In-order traversal'
+      TabOrder = 2
+    end
+  end
+  object controlsGroupBox: TGroupBox
+    Left = 216
+    Top = 168
+    Width = 185
+    Height = 129
+    Caption = 'Controls'
+    TabOrder = 5
+    object rebalanceButton: TButton
+      Left = 32
+      Top = 24
+      Width = 121
+      Height = 25
+      Caption = 'Rebalance tree'
+      TabOrder = 0
+    end
+    object deleteButton: TButton
+      Left = 32
+      Top = 88
+      Width = 121
+      Height = 25
+      Caption = 'Delete tree'
+      TabOrder = 1
+    end
+    object leavesButton: TButton
+      Left = 32
+      Top = 56
+      Width = 121
+      Height = 25
+      Caption = 'Print number of leaves'
+      TabOrder = 2
     end
   end
 end
