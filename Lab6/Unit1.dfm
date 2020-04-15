@@ -24,16 +24,16 @@ object Form1: TForm1
   end
   object treeLabel: TLabel
     Left = 416
-    Top = 16
+    Top = 8
     Width = 98
     Height = 13
     Caption = 'Tree representation :'
   end
   object PrintArea: TMemo
     Left = 416
-    Top = 32
+    Top = 24
     Width = 409
-    Height = 465
+    Height = 473
     Lines.Strings = (
       'PrintArea')
     TabOrder = 0
