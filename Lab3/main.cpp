@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <cstdio>
 #include <algorithm>
 #include <cstring>
@@ -63,9 +64,9 @@ unsigned readFile(const char filename[], char** buffer, unsigned maxSize = 0);
 unsigned filelength(FILE* file);
 
 // Functions for safe input
-int safeReadInt(bool *ok = nullptr);
 int rangeReadInt(int minimal, int maximal, const char* prompt);
 int safeReadString(char* buffer, unsigned maxLength);
+void flush_stdin();
 
 Date safeReadDate(bool *ok);
 Date promptDate(const char* prompt);
@@ -396,47 +397,19 @@ unsigned filelength(FILE* file)
     return length;
 }
 
-int safeReadInt(bool* ok)
-{
-    static const unsigned int LINE_SIZE = 255;
-    char lineBuffer[LINE_SIZE];
-    int result = 0;
-    char sign = 1;
-    if (ok) *ok = false;
-
-    // get the whole line
-    fgets(lineBuffer, LINE_SIZE, stdin);
-    int lineSize = strlen(lineBuffer);
-
-    // parse the buffer
-    int i;
-    for (i = 0; i < lineSize && isspace(lineBuffer[i]); ++i);   // skip spaces
-    if (i < lineSize && (lineBuffer[i] == '+' || lineBuffer[i] == '-'))
-        if (lineBuffer[i++] == '-')
-            sign *= -1;
-    for (; i < lineSize && isdigit(lineBuffer[i]); ++i)
-    {
-        if (ok && !(*ok)) *ok = true;
-        result = result * 10 + int(lineBuffer[i] - '0');
-    }
-
-    return result * sign;
-}
-
 int rangeReadInt(int minimal, int maximal, const char *prompt)
 {
     bool ok = false;
-    int result = 0;
-    while (!ok)
+    int result;
+    do
     {
         printf("%s", prompt);
-        result = safeReadInt(&ok);
-        if (!ok || result < minimal || result > maximal)
-        {
+        ok = scanf("%d", &result) == 1;
+        ok &= result >= minimal && result <= maximal;
+        flush_stdin();
+        if (!ok)
             printf("Please, input a value between %d and %d (inclusive)\n", minimal, maximal);
-            ok = false;
-        }
-    }
+    } while (!ok);
     return result;
 }
 
@@ -447,6 +420,12 @@ int safeReadString(char* buffer, unsigned maxLength)
     int size = strlen(buffer);
     while (size > 1 && buffer[size - 1] == '\n') buffer[size-- -1] = '\0';
     return size;
+}
+
+void flush_stdin()
+{
+    char c;
+    while ((c = getc(stdin)) != '\n' && c != EOF);
 }
 
 Date safeReadDate(bool *ok)

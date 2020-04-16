@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <cstdio>
 #include <climits>
 #include <algorithm>
@@ -72,8 +73,8 @@ void menu_SortMethod_2(Stack** stack);
 void menu_IndividualTask(Stack** stack);
 
 // safe input functions
-int safeReadInt(bool *ok = nullptr);
 int rangeReadInt(int minimal, int maximal, const char* prompt);
+void flush_stdin();
 
 int main()
 {
@@ -229,47 +230,24 @@ void menu_IndividualTask(Stack** stack)
     printf("Done!\n");
 }
 
-int safeReadInt(bool* ok)
-{
-    static const unsigned int LINE_SIZE = 255;
-    char lineBuffer[LINE_SIZE];
-    int result = 0;
-    char sign = 1;
-    if (ok) *ok = false;
-
-    // get the whole line
-    fgets(lineBuffer, LINE_SIZE, stdin);
-    int lineSize = strlen(lineBuffer);
-
-    // parse the buffer
-    int i;
-    for (i = 0; i < lineSize && isspace(lineBuffer[i]); ++i);   // skip spaces
-    if (i < lineSize && (lineBuffer[i] == '+' || lineBuffer[i] == '-'))
-        if (lineBuffer[i++] == '-')
-            sign *= -1;
-    for (; i < lineSize && isdigit(lineBuffer[i]); ++i)
-    {
-        if (ok && !(*ok)) *ok = true;
-        result = result * 10 + int(lineBuffer[i] - '0');
-    }
-
-    return result * sign;
-}
-
-
 int rangeReadInt(int minimal, int maximal, const char *prompt)
 {
     bool ok = false;
-    int result = 0;
-    while (!ok)
+    int result;
+    do
     {
         printf("%s", prompt);
-        result = safeReadInt(&ok);
-        if (!ok || result < minimal || result > maximal)
-        {
+        ok = scanf("%d", &result) == 1;
+        ok &= result >= minimal && result <= maximal;
+        flush_stdin();
+        if (!ok)
             printf("Please, input a value between %d and %d (inclusive)\n", minimal, maximal);
-            ok = false;
-        }
-    }
+    } while (!ok);
     return result;
+}
+
+void flush_stdin()
+{
+    char c;
+    while ((c = getc(stdin)) != '\n' && c != EOF);
 }

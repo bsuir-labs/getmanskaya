@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <iostream>
 #include <cstring>
 #include <climits>
@@ -31,11 +32,10 @@ void readStudent(Student &student);
 void printStudent(Student student);
 void fprintStudent(Student student, FILE* stream);
 
-int safeReadInt(bool *ok = nullptr);
 int rangeReadInt(int minimal, int maximal, const char* prompt);
 int safeReadString(char* buffer, unsigned maxLength);
 char safeGetChar();
-int getChoice(int minimal, int maximal);
+void flush_stdin();
 
 // Menu choice functions
 int getMainMenuChoice();
@@ -81,47 +81,19 @@ int main()
     return 0;
 }
 
-int safeReadInt(bool* ok)
-{
-    static const unsigned int LINE_SIZE = 255;
-    char lineBuffer[LINE_SIZE];
-    int result = 0;
-    char sign = 1;
-    if (ok) *ok = false;
-
-    // get the whole line
-    fgets(lineBuffer, LINE_SIZE, stdin);
-    int lineSize = strlen(lineBuffer);
-
-    // parse the buffer
-    int i;
-    for (i = 0; i < lineSize && isspace(lineBuffer[i]); ++i);   // skip spaces
-    if (i < lineSize && (lineBuffer[i] == '+' || lineBuffer[i] == '-'))
-        if (lineBuffer[i++] == '-')
-            sign *= -1;
-    for (; i < lineSize && isdigit(lineBuffer[i]); ++i)
-    {
-        if (ok && !(*ok)) *ok = true;
-        result = result * 10 + int(lineBuffer[i] - '0');
-    }
-
-    return result * sign;
-}
-
 int rangeReadInt(int minimal, int maximal, const char *prompt)
 {
     bool ok = false;
-    int result = 0;
-    while (!ok)
+    int result;
+    do
     {
         printf("%s", prompt);
-        result = safeReadInt(&ok);
-        if (!ok || result < minimal || result > maximal)
-        {
+        ok = scanf("%d", &result) == 1;
+        ok &= result >= minimal && result <= maximal;
+        flush_stdin();
+        if (!ok)
             printf("Please, input a value between %d and %d (inclusive)\n", minimal, maximal);
-            ok = false;
-        }
-    }
+    } while (!ok);
     return result;
 }
 
@@ -136,18 +108,19 @@ int safeReadString(char* buffer, unsigned maxLength)
 
 char safeGetChar()
 {
-    char buffer[255];
-    fgets(buffer, 254, stdin);
-    if (strlen(buffer) > 1) return buffer[0];
-    return '\0';
+    char c;
+    bool ok;
+    do {
+        ok = scanf("%c", &c) == 1;
+        flush_stdin();
+    } while (!ok);
+    return c;
 }
 
-int getChoice(int minimal, int maximal)
+void flush_stdin()
 {
-    bool ok;
-    int res = safeReadInt(&ok);
-    ok = ok && (res >= minimal && res <= maximal);
-    return ok ? res : minimal - 1;
+    char c;
+    while ((c = getc(stdin)) != '\n' && c != EOF);
 }
 
 int getMainMenuChoice()
@@ -163,26 +136,7 @@ int getMainMenuChoice()
     printf("%6d | Correct record\n", ++point);
     printf("%6d | Individual task\n", ++point);
     printf("%6d | Quit\n", ++point);
-
-    bool ok = false;
-
-    while (!ok)
-    {
-        printf("\nYour choice > ");
-        choice = safeReadInt(&ok);
-
-        if (!ok)
-        {
-            printf("[ERROR] Please, check your input. It should contain only digits.\n");
-            continue;
-        }
-
-        if (choice < 1 || choice > point)
-        {
-            ok = false;
-            printf("[ERROR] No such index in menu. Please, correct your input.\n");
-        }
-    }
+    choice = rangeReadInt(1, point, "Your choice > ");
     return choice;
 }
 
@@ -230,11 +184,7 @@ void correctRecord()
     for (unsigned i = 0; i < size; ++i)
         printf("%3d:\t%s %s\n", i, students[i].surname, students[i].initials);
 
-    printf("Specify number to correct: ");
-    int numberToCorrect = -1;
-    bool ok = false;
-    while (!ok || numberToCorrect < 0 || numberToCorrect >= int(size))
-        numberToCorrect = safeReadInt(&ok);
+    int numberToCorrect = rangeReadInt(0, size, "Specify number to correct: ");
 
     printStudent(students[numberToCorrect]);
     printf("Specify new values:\n");
