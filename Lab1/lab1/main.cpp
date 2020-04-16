@@ -28,9 +28,10 @@ struct Student
 
     double average_mark;
 };
-void readStudent(Student &student);
+void readStudent(Student& student);
 void printStudent(Student student);
 void fprintStudent(Student student, FILE* stream);
+int max(int a, int b);
 
 int rangeReadInt(int minimal, int maximal, const char* prompt);
 int safeReadString(char* buffer, unsigned maxLength);
@@ -81,7 +82,7 @@ int main()
     return 0;
 }
 
-int rangeReadInt(int minimal, int maximal, const char *prompt)
+int rangeReadInt(int minimal, int maximal, const char* prompt)
 {
     bool ok = false;
     int result;
@@ -102,7 +103,7 @@ int safeReadString(char* buffer, unsigned maxLength)
     fgets(buffer, maxLength, stdin);
     // sanitize
     int size = strlen(buffer);
-    while (size > 1 && buffer[size - 1] == '\n') buffer[size-- -1] = '\0';
+    while (size > 1 && buffer[size - 1] == '\n') buffer[size-- - 1] = '\0';
     return size;
 }
 
@@ -244,7 +245,7 @@ void goodbyeMessage()
     printf("Press Enter key to continue.\n");
 }
 
-void readStudent(Student &student)                      // TODO: refactor
+void readStudent(Student& student)                      // TODO: refactor
 {
     printf("*** reading student info ***\n\n");
 
@@ -260,7 +261,7 @@ void readStudent(Student &student)                      // TODO: refactor
     student.mark_informatics = rangeReadInt(0, 10, "Mark for informatics: ");
 
     student.average_mark = (student.mark_maths + student.mark_physics +
-                            student.mark_chemistry + student.mark_informatics) / 4.0;
+        student.mark_chemistry + student.mark_informatics) / 4.0;
 }
 
 void printStudent(Student student)
@@ -279,6 +280,12 @@ void fprintStudent(Student student, FILE* stream)
     fprintf(stream, "\tInformatics: %d\n\n", student.mark_informatics);
     fprintf(stream, "\tAverage:     %f\n", student.average_mark);
     fprintf(stream, "\n");
+}
+
+int max(int a, int b)
+{
+    if (a > b) return a;
+    return b;
 }
 
 void createFile(const char filename[])
