@@ -51,7 +51,7 @@ void selectionSort(Cargo* array, unsigned size);
 void quickSort(Cargo* array, int left, int right);
 int binarySearch(Cargo* array, unsigned size, const char title[]);
 
-void readCargo(Cargo &cargo);
+void readCargo(Cargo& cargo);
 void printCargo(Cargo cargo);
 
 
@@ -68,7 +68,6 @@ int rangeReadInt(int minimal, int maximal, const char* prompt);
 int safeReadString(char* buffer, unsigned maxLength);
 void flush_stdin();
 
-Date safeReadDate(bool *ok);
 Date promptDate(const char* prompt);
 
 int main()
@@ -79,18 +78,18 @@ int main()
     {
         switch (getMainMenuChoice())
         {
-            case 1: menu_CreateNewRecord(); break;
-            case 2: menu_ShowAllRecords(); break;
-            case 3: menu_CorrectRecord(); break;
-            case 4: menu_LinearSearch(); break;
-            case 5: menu_SelectionSort(); break;
-            case 6: menu_QuickSort(); break;
-            case 7: menu_BinarySearch(); break;
-            case 8:
-                stopRequested = true;
-                printf("Goodbye! have a nice day!\n");
-                break;
-            default: printf("Something went wrong...\n");
+        case 1: menu_CreateNewRecord(); break;
+        case 2: menu_ShowAllRecords(); break;
+        case 3: menu_CorrectRecord(); break;
+        case 4: menu_LinearSearch(); break;
+        case 5: menu_SelectionSort(); break;
+        case 6: menu_QuickSort(); break;
+        case 7: menu_BinarySearch(); break;
+        case 8:
+            stopRequested = true;
+            printf("Goodbye! have a nice day!\n");
+            break;
+        default: printf("Something went wrong...\n");
         }
         getc(stdin);
     }
@@ -129,7 +128,7 @@ void menu_CreateNewRecord()
 
 void menu_ShowAllRecords()
 {
-    Cargo *cargos = nullptr;
+    Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
@@ -141,7 +140,7 @@ void menu_ShowAllRecords()
 
 void menu_CorrectRecord()
 {
-    Cargo *cargos = nullptr;
+    Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
@@ -161,7 +160,7 @@ void menu_CorrectRecord()
 
 void menu_LinearSearch()
 {
-    Cargo *cargos = nullptr;
+    Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
@@ -185,7 +184,7 @@ void menu_LinearSearch()
 
 void menu_SelectionSort()
 {
-    Cargo *cargos = nullptr;
+    Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
@@ -207,7 +206,7 @@ void menu_SelectionSort()
 
 void menu_QuickSort()
 {
-    Cargo *cargos = nullptr;
+    Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
@@ -227,7 +226,7 @@ void menu_QuickSort()
 
 void menu_BinarySearch()
 {
-    Cargo *cargos = nullptr;
+    Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
@@ -298,7 +297,7 @@ int binarySearch(Cargo* array, unsigned size, const char title[])
     return result;
 }
 
-void readCargo(Cargo &cargo)
+void readCargo(Cargo& cargo)
 {
     printf("*** reading cargo info ***\n\n");
 
@@ -314,8 +313,8 @@ void printCargo(Cargo cargo)
     printf("Quantity:    %d\n", cargo.quantity);
     printf("Cost:        %d\n", cargo.cost);
     printf("Income date: %d.%02d.%02d\n", cargo.income_date.year,
-                                          cargo.income_date.month,
-                                          cargo.income_date.day);
+        cargo.income_date.month,
+        cargo.income_date.day);
     printf("\n");
 }
 
@@ -397,7 +396,7 @@ unsigned filelength(FILE* file)
     return length;
 }
 
-int rangeReadInt(int minimal, int maximal, const char *prompt)
+int rangeReadInt(int minimal, int maximal, const char* prompt)
 {
     bool ok = false;
     int result;
@@ -418,7 +417,7 @@ int safeReadString(char* buffer, unsigned maxLength)
     fgets(buffer, maxLength, stdin);
     // sanitize
     int size = strlen(buffer);
-    while (size > 1 && buffer[size - 1] == '\n') buffer[size-- -1] = '\0';
+    while (size > 1 && buffer[size - 1] == '\n') buffer[size-- - 1] = '\0';
     return size;
 }
 
@@ -428,59 +427,19 @@ void flush_stdin()
     while ((c = getc(stdin)) != '\n' && c != EOF);
 }
 
-Date safeReadDate(bool *ok)
-{
-    static const unsigned int LINE_SIZE = 255;
-    char lineBuffer[LINE_SIZE];
-
-    fgets(lineBuffer, LINE_SIZE - 1, stdin);
-    int size = strlen(lineBuffer);
-
-    unsigned parts[3];
-
-    *ok = true;
-    int i, readParts = 0, buffer = 0;
-    for (i = 0; i < size && isspace(lineBuffer[i]); ++i);
-    for (; i < size && readParts < 3; ++i)
-    {
-        char c = lineBuffer[i];
-        if (isdigit(c))
-        {
-            buffer = buffer * 10 + int(c - '0');
-            continue;
-        }
-        if ('.' == c || '\n' == c)
-        {
-            parts[readParts++] = buffer;
-            buffer = 0;
-            continue;
-        }
-        *ok = false;
-    }
-    if (*ok)
-    {
-        *ok &= parts[0] > 0 && parts[0] <= 2020;
-        *ok &= parts[1] > 0 && parts[1] <= 12;
-        *ok &= parts[2] > 0 && parts[2] <= 31;
-    }
-
-    Date date;
-    date.day = parts[2];
-    date.month = parts[1];
-    date.year = parts[0];
-    return date;
-}
-
 Date promptDate(const char* prompt)
 {
     bool ok = false;
     Date result;
-    while (!ok)
-    {
+    do {
         printf("%s", prompt);
-        result = safeReadDate(&ok);
+        ok = scanf("%d.%d.%d", &result.day, &result.month, &result.year);
+        flush_stdin();
+        ok &= result.day > 0 && result.day < 32;
+        ok &= result.month > 0 && result.month < 13;
+        ok &= result.year > 1970 && result.year < 2021;
         if (!ok)
-            printf("Please, input a valid date in format YYYY.MM.DD\n");
-    }
+            printf("Please, input a valid date in format DD.MM.YYYY\n");
+    } while (!ok);
     return result;
 }
