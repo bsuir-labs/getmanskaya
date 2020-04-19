@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 192
-  Top = 114
+  Left = 940
+  Top = 266
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Trees'
@@ -148,6 +148,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Pre-order traversal'
       TabOrder = 0
+      OnClick = preorderButtonClick
     end
     object postorderButton: TButton
       Left = 16
@@ -156,6 +157,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Post-order traversal'
       TabOrder = 1
+      OnClick = postorderButtonClick
     end
     object inorderButton: TButton
       Left = 16
@@ -164,6 +166,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'In-order traversal'
       TabOrder = 2
+      OnClick = inorderButtonClick
     end
   end
   object controlsGroupBox: TGroupBox

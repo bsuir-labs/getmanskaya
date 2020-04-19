@@ -43,6 +43,38 @@ void TForm1::printToOutput(const String &str)
 {
     this->searchResultsArea->Lines->Add(str);
 }
+
+void TForm1::preOrderTraversal(BSUIR::Tree *start)
+{
+    if (!start) return;
+
+    String node = "[" + IntToStr(start->value) + "] " + start->caption;
+    this->printToOutput(node);
+    this->preOrderTraversal(start->left);
+    this->preOrderTraversal(start->right);
+}
+
+void TForm1::postOrderTraversal(BSUIR::Tree *node)
+{
+    if (!node) return;
+
+    String str = "[" + IntToStr(node->value) + "] " + node->caption;
+    this->postOrderTraversal(node->left);
+    this->postOrderTraversal(node->right);
+    this->printToOutput(str);
+}
+
+void TForm1::inOrderTraversal(BSUIR::Tree *node)
+{
+    if (!node) return;
+
+    String str = "[" + IntToStr(node->value) + "] " + node->caption;
+
+    this->inOrderTraversal(node->left);
+    this->printToOutput(str);
+    this->inOrderTraversal(node->right);
+}
+
 //---------------------------------------------------------------------------
 
 BSUIR::Tree* BSUIR::InitTree(int value, String caption)
@@ -219,6 +251,51 @@ void __fastcall TForm1::findAndEraseButtonClick(TObject *Sender)
     this->searchResultsArea->Lines->Add(output);
 
     this->updateTreeView();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::preorderButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    if (!this->treeIsInited())
+    {
+        this->printToOutput("Init the tree first.");
+        return;
+    }
+    this->clearOutput();
+    this->printToOutput("### PRE-ORDER TRAVERSAL ###");
+
+    this->preOrderTraversal(this->root);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::postorderButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    if (!this->treeIsInited())
+    {
+        this->printToOutput("Init the tree first.");
+        return;
+    }
+    this->clearOutput();
+    this->printToOutput("### POST-ORDER TRAVERSAL ###");
+
+    this->postOrderTraversal(this->root);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::inorderButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    if (!this->treeIsInited())
+    {
+        this->printToOutput("Init the tree first.");
+        return;
+    }
+    this->clearOutput();
+    this->printToOutput("### IN-ORDER TRAVERSAL ###");
+
+    this->inOrderTraversal(this->root);
 }
 //---------------------------------------------------------------------------
 

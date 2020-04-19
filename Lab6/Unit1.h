@@ -60,6 +60,9 @@ __published:	// IDE-managed Components
     void __fastcall AppendButtonClick(TObject *Sender);
     void __fastcall findAndPrintButtonClick(TObject *Sender);
     void __fastcall findAndEraseButtonClick(TObject *Sender);
+    void __fastcall preorderButtonClick(TObject *Sender);
+    void __fastcall postorderButtonClick(TObject *Sender);
+    void __fastcall inorderButtonClick(TObject *Sender);
 private:	// User declarations
     BSUIR::Tree *root;     // Root of our tree
 
@@ -69,6 +72,10 @@ private:	// User declarations
 
     void clearOutput();
     void printToOutput(const String &str);
+
+    void preOrderTraversal(BSUIR::Tree *start);
+    void postOrderTraversal(BSUIR::Tree *start);
+    void inOrderTraversal(BSUIR::Tree *start);
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);
 };
