@@ -8,7 +8,19 @@
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
 #include <ExtCtrls.hpp>
+#include <Grids.hpp>
 #include <vector>
+
+/*
+  TODO list for 2020.03.19
+
+  1. Implement tree initialization out of source table
+  2. Implement tree deletion.
+  3. Implement tree rebalancing.
+  4. Implement number of leaves counting.
+  5. Implement input fields validation.
+
+*/
 
 namespace BSUIR
 {
@@ -57,6 +69,10 @@ __published:	// IDE-managed Components
     TButton *deleteButton;
     TButton *leavesButton;
     TLabel *treeLabel;
+    TGroupBox *treeInitGroupBox;
+    TStringGrid *sourceStringGrid;
+    TButton *initTreeButton;
+    TButton *clearTableButton;
     void __fastcall AppendButtonClick(TObject *Sender);
     void __fastcall findAndPrintButtonClick(TObject *Sender);
     void __fastcall findAndEraseButtonClick(TObject *Sender);

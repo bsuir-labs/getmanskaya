@@ -1,11 +1,11 @@
 object Form1: TForm1
-  Left = 930
-  Top = 174
+  Left = 1067
+  Top = 118
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Trees'
   ClientHeight = 506
-  ClientWidth = 836
+  ClientWidth = 724
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,31 +16,31 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object searchResultsLabel: TLabel
-    Left = 16
-    Top = 304
+    Left = 416
+    Top = 8
     Width = 35
     Height = 13
     Caption = 'Output:'
   end
   object treeLabel: TLabel
     Left = 416
-    Top = 8
+    Top = 192
     Width = 98
     Height = 13
     Caption = 'Tree representation :'
   end
   object PrintArea: TMemo
     Left = 416
-    Top = 24
-    Width = 409
-    Height = 473
+    Top = 208
+    Width = 297
+    Height = 289
     Lines.Strings = (
       'PrintArea')
     TabOrder = 0
   end
   object appendGroupBox: TGroupBox
     Left = 16
-    Top = 8
+    Top = 208
     Width = 185
     Height = 153
     Caption = 'Add new value'
@@ -85,7 +85,7 @@ object Form1: TForm1
   end
   object findGroupBox: TGroupBox
     Left = 216
-    Top = 8
+    Top = 208
     Width = 185
     Height = 153
     Caption = 'Search'
@@ -128,15 +128,15 @@ object Form1: TForm1
     end
   end
   object searchResultsArea: TMemo
-    Left = 16
-    Top = 320
-    Width = 385
-    Height = 177
+    Left = 416
+    Top = 24
+    Width = 297
+    Height = 161
     TabOrder = 3
   end
   object printGroupBox: TGroupBox
     Left = 16
-    Top = 168
+    Top = 368
     Width = 185
     Height = 129
     Caption = 'Print'
@@ -171,7 +171,7 @@ object Form1: TForm1
   end
   object controlsGroupBox: TGroupBox
     Left = 216
-    Top = 168
+    Top = 368
     Width = 185
     Height = 129
     Caption = 'Controls'
@@ -198,6 +198,47 @@ object Form1: TForm1
       Width = 121
       Height = 25
       Caption = 'Print number of leaves'
+      TabOrder = 2
+    end
+  end
+  object treeInitGroupBox: TGroupBox
+    Left = 16
+    Top = 8
+    Width = 385
+    Height = 193
+    Caption = 'Tree initialization'
+    TabOrder = 6
+    object sourceStringGrid: TStringGrid
+      Left = 8
+      Top = 16
+      Width = 369
+      Height = 120
+      ColCount = 2
+      Ctl3D = True
+      FixedCols = 0
+      RowCount = 100
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor]
+      ParentCtl3D = False
+      ScrollBars = ssVertical
+      TabOrder = 0
+      ColWidths = (
+        74
+        270)
+    end
+    object initTreeButton: TButton
+      Left = 280
+      Top = 152
+      Width = 91
+      Height = 25
+      Caption = 'Create the tree'
+      TabOrder = 1
+    end
+    object clearTableButton: TButton
+      Left = 176
+      Top = 152
+      Width = 91
+      Height = 25
+      Caption = 'Clear table'
       TabOrder = 2
     end
   end

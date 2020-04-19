@@ -13,6 +13,9 @@ __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
     , root(NULL)
 {
+    // setup cols
+    this->sourceStringGrid->Cells[0][0] = "Key";
+    this->sourceStringGrid->Cells[1][0] = "Value";
     updateTreeView();
 }
 
