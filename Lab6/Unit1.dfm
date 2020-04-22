@@ -36,6 +36,7 @@ object Form1: TForm1
     Height = 289
     Lines.Strings = (
       'PrintArea')
+    ScrollBars = ssVertical
     TabOrder = 0
   end
   object appendGroupBox: TGroupBox
@@ -132,6 +133,7 @@ object Form1: TForm1
     Top = 24
     Width = 297
     Height = 161
+    ScrollBars = ssVertical
     TabOrder = 3
   end
   object printGroupBox: TGroupBox
@@ -201,6 +203,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Print number of leaves'
       TabOrder = 2
+      OnClick = leavesButtonClick
     end
   end
   object treeInitGroupBox: TGroupBox

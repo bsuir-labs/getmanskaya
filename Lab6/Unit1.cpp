@@ -244,11 +244,12 @@ std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool is
    return res;
 }
 
-//RecordList CreateRecordList(int size);
-//void RemoveRecordList(RecordList list);
-
-/// -1 value for the right edge means "list->size - 1"
-//void QSort(RecordList list, int l = 0, int r = -1);
+int BSUIR::CountLeaves(BSUIR::Tree *root)
+{
+    if (!root) return 0;
+    if (root->left == NULL && root->right == NULL) return 1;
+    return CountLeaves(root->left) + CountLeaves(root->right);
+}
 
 BSUIR::RecordList BSUIR::CreateRecordList(int size)
 {
@@ -463,6 +464,16 @@ void __fastcall TForm1::initTreeButtonClick(TObject *Sender)
     if (this->treeIsInited()) BSUIR::DeleteTree(&root);
     this->root = BSUIR::CreateTree(list);
     this->updateTreeView();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::leavesButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    this->clearOutput();
+    int numberOfLeaves = BSUIR::CountLeaves(root);
+    String output = "The tree contains " + IntToStr(numberOfLeaves) + " leaves!";
+    this->printToOutput(output);
 }
 //---------------------------------------------------------------------------
 

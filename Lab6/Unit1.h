@@ -11,18 +11,10 @@
 #include <Grids.hpp>
 #include <vector>
 
-/*
-  TODO list for 2020.03.19
-
-  4. Implement number of leaves counting.
-  5. Implement input fields validation.
-
-*/
-
 namespace BSUIR
 {
 
-struct Tree                    s
+struct Tree                    
 {
     int value; // key
     String caption;  // value
@@ -41,6 +33,7 @@ int GetTreeSize(Tree *root);
 Tree* FindNodeByKey(Tree *root, int key);
 bool RemoveFromTree(Tree **root, int key);
 std::vector<String> GetTreeView(Tree *root, String prefix = "", bool isLeft = false);
+int CountLeaves(Tree *root);
 
 struct Record
 {
@@ -102,6 +95,7 @@ __published:	// IDE-managed Components
     void __fastcall rebalanceButtonClick(TObject *Sender);
     void __fastcall clearTableButtonClick(TObject *Sender);
     void __fastcall initTreeButtonClick(TObject *Sender);
+    void __fastcall leavesButtonClick(TObject *Sender);
 private:	// User declarations
     BSUIR::Tree *root;     // Root of our tree
 
