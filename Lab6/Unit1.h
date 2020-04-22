@@ -36,12 +36,31 @@ struct Tree
 /// The function for creating new root node
 /// and initializing it with a value
 Tree* InitTree(int value, String caption);
+void DeleteTree(Tree **root);
 void InsertIntoTree(Tree *root, int value, String caption);
 /// Returns a pointer to a node with the specified key
 /// If not found, returns NULL
 Tree* FindNodeByKey(Tree *root, int key);
 bool RemoveFromTree(Tree **root, int key);
 std::vector<String> GetTreeView(Tree *root, String prefix = "", bool isLeft = false);
+
+struct Record
+{
+    int key;
+    String caption;
+};
+
+struct RecordList
+{
+    Record* data;
+    int size;
+};
+
+RecordList CreateRecordList(int size);
+void RemoveRecordList(RecordList &list);
+
+/// -1 value for the right edge means "list->size - 1"
+void Sort(RecordList list);
 
 }
 

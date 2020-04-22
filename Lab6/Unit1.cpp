@@ -89,6 +89,17 @@ BSUIR::Tree* BSUIR::InitTree(int value, String caption)
     return root;
 }
 
+void BSUIR::DeleteTree(BSUIR::Tree **root)
+{
+    if (*root != NULL)
+    {
+        DeleteTree(&(*root)->left);
+        DeleteTree(&(*root)->right);
+        delete *root;
+        *root = NULL;
+    }
+}
+
 void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value, String caption)
 {
     Tree *cur = root, *prev = NULL;
@@ -199,6 +210,49 @@ std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool is
    }
    return res;
 }
+
+//RecordList CreateRecordList(int size);
+//void RemoveRecordList(RecordList list);
+
+/// -1 value for the right edge means "list->size - 1"
+//void QSort(RecordList list, int l = 0, int r = -1);
+
+BSUIR::RecordList BSUIR::CreateRecordList(int size)
+{
+    RecordList list;
+    list.size = size;
+    list.data = new Record[size];
+    return list;
+}
+
+void BSUIR::RemoveRecordList(RecordList &list)
+{
+    list.size = 0;
+    if (list.data != NULL)
+    {
+        delete list.data;
+        list.data = NULL;
+    }
+}
+
+void BSUIR::Sort(BSUIR::RecordList list)
+{
+    int size = list.size;
+    for (int i = 0; i < size - 1; ++i)
+    {
+        int to_swap = i;
+        for (int j = i + 1; j < size; ++j)
+            if (list.data[j].key < list.data[to_swap].key)
+               to_swap = j;
+        if (to_swap != i)
+        {
+           Record tmp = list.data[i];
+           list.data[i] = list.data[to_swap];
+           list.data[to_swap] = tmp;
+        }
+    }
+}
+
 void __fastcall TForm1::AppendButtonClick(TObject *Sender)
 {
     ((void)Sender);
