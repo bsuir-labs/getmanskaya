@@ -167,3 +167,7 @@ build*/
 
 # End of https://www.gitignore.io/api/c,qt,c++,cmake,qtcreator
 
+
+# C++ Builder shit
+*.~*
+*.tds
