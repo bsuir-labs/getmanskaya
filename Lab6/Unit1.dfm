@@ -183,6 +183,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Rebalance tree'
       TabOrder = 0
+      OnClick = rebalanceButtonClick
     end
     object deleteButton: TButton
       Left = 32

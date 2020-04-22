@@ -15,7 +15,6 @@
   TODO list for 2020.03.19
 
   1. Implement tree initialization out of source table
-  2. Implement tree deletion.
   3. Implement tree rebalancing.
   4. Implement number of leaves counting.
   5. Implement input fields validation.
@@ -38,6 +37,7 @@ struct Tree
 Tree* InitTree(int value, String caption);
 void DeleteTree(Tree **root);
 void InsertIntoTree(Tree *root, int value, String caption);
+int GetTreeSize(Tree *root);
 /// Returns a pointer to a node with the specified key
 /// If not found, returns NULL
 Tree* FindNodeByKey(Tree *root, int key);
@@ -58,9 +58,11 @@ struct RecordList
 
 RecordList CreateRecordList(int size);
 void RemoveRecordList(RecordList &list);
-
-/// -1 value for the right edge means "list->size - 1"
 void Sort(RecordList list);
+
+// The value -1 means the last element in list
+Tree *CreateTree(RecordList list, int l = 0, int r = -1);
+int CreateListFromTree(RecordList list, Tree *root, int lastElement = 0);
 
 }
 
@@ -99,6 +101,7 @@ __published:	// IDE-managed Components
     void __fastcall postorderButtonClick(TObject *Sender);
     void __fastcall inorderButtonClick(TObject *Sender);
     void __fastcall deleteButtonClick(TObject *Sender);
+    void __fastcall rebalanceButtonClick(TObject *Sender);
 private:	// User declarations
     BSUIR::Tree *root;     // Root of our tree
 

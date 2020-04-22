@@ -122,6 +122,12 @@ void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value, String caption)
     }
 }
 
+int BSUIR::GetTreeSize(BSUIR::Tree *root)
+{
+    if (root == NULL) return 0;
+    return 1 + GetTreeSize(root->left) + GetTreeSize(root->right);
+}
+
 BSUIR::Tree* BSUIR::FindNodeByKey(BSUIR::Tree *root, int key)
 {
     Tree *ptr = root;
@@ -253,6 +259,33 @@ void BSUIR::Sort(BSUIR::RecordList list)
     }
 }
 
+BSUIR::Tree *BSUIR::CreateTree(BSUIR::RecordList list, int l, int r)
+{
+    if (r == -1) r = list.size;
+    if (l == r) return NULL;
+
+    int mid = (l + r) / 2;
+    Tree* node = new Tree;
+    node->value = list.data[mid].key;
+    node->caption = list.data[mid].caption;
+    node->left = CreateTree(list, l, mid);
+    node->right = CreateTree(list, mid + 1, r);
+    return node;
+}
+
+int BSUIR::CreateListFromTree(BSUIR::RecordList list, BSUIR::Tree *root, int lastElement)
+{
+    if (root == NULL) return lastElement;
+    lastElement = CreateListFromTree(list, root->left, lastElement);
+    Record rec;
+    rec.key = root->value;
+    rec.caption = root->caption;
+    list.data[lastElement] = rec;
+    lastElement++;
+    lastElement = CreateListFromTree(list, root->right, lastElement);
+    return lastElement;
+}
+
 void __fastcall TForm1::AppendButtonClick(TObject *Sender)
 {
     ((void)Sender);
@@ -358,10 +391,33 @@ void __fastcall TForm1::inorderButtonClick(TObject *Sender)
 
 void __fastcall TForm1::deleteButtonClick(TObject *Sender)
 {
+    ((void)Sender);
     BSUIR::DeleteTree(&root);
     this->updateTreeView();
     this->clearOutput();
     this->printToOutput("Tree was deleted.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::rebalanceButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    this->clearOutput();
+    if (this->root == NULL)
+    {
+        this->printToOutput("Can't rebalance empty tree");
+        return;
+    }
+
+    int treeSize = BSUIR::GetTreeSize(root);
+    BSUIR::RecordList list = BSUIR::CreateRecordList(treeSize);
+    BSUIR::CreateListFromTree(list, root);
+    BSUIR::Sort(list);
+    BSUIR::DeleteTree(&root);
+    root = BSUIR::CreateTree(list);
+
+    this->printToOutput("The tree was rebalanced...");
+    this->updateTreeView();
 }
 //---------------------------------------------------------------------------
 
