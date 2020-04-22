@@ -14,8 +14,6 @@
 /*
   TODO list for 2020.03.19
 
-  1. Implement tree initialization out of source table
-  3. Implement tree rebalancing.
   4. Implement number of leaves counting.
   5. Implement input fields validation.
 
@@ -24,7 +22,7 @@
 namespace BSUIR
 {
 
-struct Tree
+struct Tree                    s
 {
     int value; // key
     String caption;  // value
@@ -102,6 +100,8 @@ __published:	// IDE-managed Components
     void __fastcall inorderButtonClick(TObject *Sender);
     void __fastcall deleteButtonClick(TObject *Sender);
     void __fastcall rebalanceButtonClick(TObject *Sender);
+    void __fastcall clearTableButtonClick(TObject *Sender);
+    void __fastcall initTreeButtonClick(TObject *Sender);
 private:	// User declarations
     BSUIR::Tree *root;     // Root of our tree
 
@@ -115,6 +115,9 @@ private:	// User declarations
     void preOrderTraversal(BSUIR::Tree *start);
     void postOrderTraversal(BSUIR::Tree *start);
     void inOrderTraversal(BSUIR::Tree *start);
+
+    void clearInput();
+    BSUIR::RecordList getListFromInput();
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);
 };

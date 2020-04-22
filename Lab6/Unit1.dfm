@@ -234,6 +234,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Create the tree'
       TabOrder = 1
+      OnClick = initTreeButtonClick
     end
     object clearTableButton: TButton
       Left = 176
@@ -242,6 +243,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Clear table'
       TabOrder = 2
+      OnClick = clearTableButtonClick
     end
   end
 end

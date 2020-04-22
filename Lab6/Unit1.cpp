@@ -78,6 +78,33 @@ void TForm1::inOrderTraversal(BSUIR::Tree *node)
     this->inOrderTraversal(node->right);
 }
 
+void TForm1::clearInput()
+{
+    int size = sourceStringGrid->RowCount;
+    for (int i = 1; i < size; ++i)
+    {
+        sourceStringGrid->Cells[0][i] = "";
+        sourceStringGrid->Cells[1][i] = "";
+    }
+}
+
+BSUIR::RecordList TForm1::getListFromInput()
+{
+    int size = this->sourceStringGrid->RowCount;
+    int realSize = 0;
+    for (int i = 1; i < size && !this->sourceStringGrid->Cells[0][i].IsEmpty(); ++i)
+        realSize++;
+
+    BSUIR::RecordList list = BSUIR::CreateRecordList(realSize);
+    for (int i = 1; i <= realSize; ++i)
+    {
+        list.data[i - 1].key = StrToInt(sourceStringGrid->Cells[0][i]);
+        list.data[i - 1].caption = sourceStringGrid->Cells[1][i];
+    }
+
+    return list;
+}
+
 //---------------------------------------------------------------------------
 
 BSUIR::Tree* BSUIR::InitTree(int value, String caption)
@@ -417,6 +444,24 @@ void __fastcall TForm1::rebalanceButtonClick(TObject *Sender)
     root = BSUIR::CreateTree(list);
 
     this->printToOutput("The tree was rebalanced...");
+    this->updateTreeView();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::clearTableButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    this->clearInput();    
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::initTreeButtonClick(TObject *Sender)
+{
+    ((void)Sender);
+    BSUIR::RecordList list = this->getListFromInput();
+    BSUIR::Sort(list);
+    if (this->treeIsInited()) BSUIR::DeleteTree(&root);
+    this->root = BSUIR::CreateTree(list);
     this->updateTreeView();
 }
 //---------------------------------------------------------------------------
