@@ -98,6 +98,7 @@ __published:	// IDE-managed Components
     void __fastcall preorderButtonClick(TObject *Sender);
     void __fastcall postorderButtonClick(TObject *Sender);
     void __fastcall inorderButtonClick(TObject *Sender);
+    void __fastcall deleteButtonClick(TObject *Sender);
 private:	// User declarations
     BSUIR::Tree *root;     // Root of our tree
 

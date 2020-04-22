@@ -356,3 +356,12 @@ void __fastcall TForm1::inorderButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::deleteButtonClick(TObject *Sender)
+{
+    BSUIR::DeleteTree(&root);
+    this->updateTreeView();
+    this->clearOutput();
+    this->printToOutput("Tree was deleted.");
+}
+//---------------------------------------------------------------------------
+

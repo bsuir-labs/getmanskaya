@@ -191,6 +191,7 @@ object Form1: TForm1
       Height = 25
       Caption = 'Delete tree'
       TabOrder = 1
+      OnClick = deleteButtonClick
     end
     object leavesButton: TButton
       Left = 32
