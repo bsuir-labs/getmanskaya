@@ -13,6 +13,7 @@
 #include <ExtDlgs.hpp>
 #include <TeEngine.hpp>
 #include <TeeProcs.hpp>
+#include <Series.hpp>
 //---------------------------------------------------------------------------
 class TForm1 : public TForm
 {
@@ -22,11 +23,20 @@ __published:	// IDE-managed Components
     TChart *Chart1;
     TGroupBox *chartControlsGroupBox;
     TGroupBox *imageControlsGroupBox;
-    TRadioGroup *RadioGroup1;
+    TRadioGroup *functionsToPlotGroup;
     TButton *playAnimationButton;
     TOpenDialog *openPictureDialog;
+    TRadioButton *sinRadioButton;
+    TRadioButton *expRadioButton;
+    TRadioButton *xxRadioButton;
+    TLabeledEdit *startEdit;
+    TLabeledEdit *finishEdit;
+    TButton *plotCharButton;
+    TLabeledEdit *stepEdit;
+    TLineSeries *Series1;
     void __fastcall loadImageButtonClick(TObject *Sender);
     void __fastcall playAnimationButtonClick(TObject *Sender);
+    void __fastcall plotCharButtonClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

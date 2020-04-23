@@ -3,6 +3,7 @@
 #include <vcl.h>
 #pragma hdrstop
 #include <jpeg.hpp>
+#include <math.h>
 
 #include "Unit1.h"
 //---------------------------------------------------------------------------
@@ -234,5 +235,30 @@ void __fastcall TForm1::playAnimationButtonClick(TObject *Sender)
         Repaint();
         Sleep(10);
     }
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::plotCharButtonClick(TObject *Sender)
+{
+   int function = 0;
+   if (this->expRadioButton->Checked) function = 1;
+   if (this->xxRadioButton->Checked) function = 2;
+
+   double start = StrToFloat(this->startEdit->Text);
+   double finish = StrToFloat(this->finishEdit->Text);
+   double step = StrToFloat(this->stepEdit->Text);
+
+   this->Series1->Clear();
+   for (double x = start; x <= finish; x += step)
+   {
+       double y;
+       switch (function)
+       {
+           case 0: y = sin(x); break;
+           case 1: y = exp(x); break;
+           case 2: y = x * x; break;
+           default: y = x;
+       }
+       this->Series1->AddXY(x, y);
+   }
 }
 //---------------------------------------------------------------------------
