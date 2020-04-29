@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const unsigned int kTestCasesNumber = 6;
+const unsigned int kTestCasesNumber = 7;
 
 enum class GraphType
 {
