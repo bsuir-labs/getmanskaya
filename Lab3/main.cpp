@@ -45,6 +45,7 @@ void menu_LinearSearch();
 void menu_SelectionSort();
 void menu_QuickSort();
 void menu_BinarySearch();
+void menu_IndividualTask();
 
 void selectionSort(Cargo* array, unsigned size);
 void quickSort(Cargo* array, int left, int right);
@@ -85,7 +86,8 @@ int main()
             case 5: menu_SelectionSort(); break;
             case 6: menu_QuickSort(); break;
             case 7: menu_BinarySearch(); break;
-            case 8:
+            case 8: menu_IndividualTask(); break;
+            case 9:
                 stopRequested = true;
                 printf("Goodbye! have a nice day!\n");
                 break;
@@ -112,6 +114,7 @@ int getMainMenuChoice()
     printf("%6d | Selection sort\n", ++point);
     printf("%6d | Quick sort\n", ++point);
     printf("%6d | Binary search\n", ++point);
+    printf("%6d | Individual task\n", ++point);
     printf("%6d | Quit\n", ++point);
 
     choice = rangeReadInt(1, point, "Your choice > ");
@@ -239,6 +242,31 @@ void menu_BinarySearch()
         printCargo(cargos[index]);
     else
         printf("No items found.\n");
+
+    delete[] cargos;
+}
+
+void menu_IndividualTask()
+{
+    Cargo *cargos = nullptr;
+    unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
+    unsigned size = bytes / sizeof(Cargo);
+
+    printf("Alphabetical order of cargos with the cost larger than 100 000.\n");
+
+    quickSort(cargos, 0, size - 1);
+
+    bool found = false;
+
+    for (unsigned i = 0; i < size; ++i)
+        if (cargos[i].cost * cargos[i].quantity > 100000)
+        {
+            printCargo(cargos[i]);
+            found = true;
+        }
+
+    if (!found)
+        printf("No cargos found.\n");
 
     delete[] cargos;
 }
