@@ -17,18 +17,21 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки для загрузки изображения из файла
 void __fastcall TForm1::loadImageButtonClick(TObject *Sender)
 {
     this->openPictureDialog->Title = "Open image";
-    if (this->openPictureDialog->Execute())
+    if (this->openPictureDialog->Execute())     // получаем путь к файлу
     {
         String file = this->openPictureDialog->FileName;
-        this->Image1->Picture->LoadFromFile(file);
+        this->Image1->Picture->LoadFromFile(file);  // загружаем картинку
         this->Image1->Stretch = true;
     }
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки для анимации
+// Логотип рамштайна рисуется, сори, ничего умнее не придумал(
 void __fastcall TForm1::playAnimationButtonClick(TObject *Sender)
 {
     this->Image1->Picture->Bitmap->Width = Image1->Width;
@@ -237,18 +240,19 @@ void __fastcall TForm1::playAnimationButtonClick(TObject *Sender)
     }
 }
 //---------------------------------------------------------------------------
+// Обработка кнопки для постройки графиков
 void __fastcall TForm1::plotCharButtonClick(TObject *Sender)
 {
    int function = 0;
    if (this->expRadioButton->Checked) function = 1;
-   if (this->xxRadioButton->Checked) function = 2;
+   if (this->xxRadioButton->Checked) function = 2;  // смотрим, какую функцию надо рисовать
 
-   double start = StrToFloat(this->startEdit->Text);
+   double start = StrToFloat(this->startEdit->Text);    // получаем границы диапазона
    double finish = StrToFloat(this->finishEdit->Text);
    double step = StrToFloat(this->stepEdit->Text);
 
    this->Series1->Clear();
-   for (double x = start; x <= finish; x += step)
+   for (double x = start; x <= finish; x += step)   // рисуем график в нужном диапазоне с нужным шагом
    {
        double y;
        switch (function)
