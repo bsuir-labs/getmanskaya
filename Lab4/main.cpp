@@ -5,74 +5,87 @@
 #include <ctype.h>
 #include <cstring>
 
+// Структура одного элемента в стэке
 struct Stack
 {
     int value   = 0;
     Stack* next = nullptr;
 };
 
+/// \brief Функция для добавления элемента в стэк
+/// \param parent - Указатель на вершину стэка, куда будет добавляться элемент
+/// \param value  - Значение, которе добавляется в стэк
+/// \return Указатель на новую вершину стэка
 Stack* push(Stack* parent, int value)
 {
-    Stack* st = new Stack;
-    st->value = value;
-    st->next = parent;
-    return st;
+    Stack* st = new Stack;  // создаём новый элемент
+    st->value = value;      // кладём туда значение
+    st->next = parent;      // указываем на старую вершину
+    return st;              // и возвращаем этот элемент
 }
 
+/// \brief Вывод стэка
+/// \param top - указатель на вершину
 void print(Stack* top)
 {
-    if (!top)
+    if (!top)           // если вершина это нулевой указатель
     {
-        printf("Stack is empty.\n");
-        return;
+        printf("Stack is empty.\n");    // то стэк пуст
+        return;                         // уходим
     }
 
     printf("*** stack ***\n");
-    while (top)
+    while (top)                         // иначе, пока мы не спустились до конца
     {
-        printf("%d\n", top->value);
-        top = top->next;
+        printf("%d\n", top->value);     // выводим значение в текущем элементе
+        top = top->next;                // сдвигаемся на следующий
     }
 }
 
+/// \brief Удаление стэка
+/// \param top - указатель на указатель на вершину стэка
 void deleteStack(Stack **top)
 {
-    while (*top)
+    while (*top)                // пока не дошли до конца
     {
-        Stack *tmp = *top;
-        *top = (*top)->next;
-        delete tmp;
+        Stack *tmp = *top;      // запоминаем адрес текущего элемента
+        *top = (*top)->next;    // сдвигаемся дальше
+        delete tmp;             // удаляем элемент по адресу, что запомнили
     }
 }
 
+/// \brief Функция, которая достаёт из стэка верхний элемент
+/// \param top - указатель на вершину стэка
+/// \param value - указатель на переменную, куда нужно положить значение верхнего элемента в стэке
+/// \return Указатель на новую вершину стэка
 Stack* pop(Stack* top, int *value)
 {
-    if (!top)
+    if (!top)   // если стэк уже пустой, то нечего доставать
     {
         printf("Error. Stack is already empty.\n");
         return nullptr;
     }
 
-    *value = top->value;
+    *value = top->value;    // Иначе - достаём значение из вершины
 
-    Stack *tmp = top;
+    Stack *tmp = top;       // И удаляем вершину (как в ф-ции deleteStack)
     top = top->next;
     delete tmp;
 
-    return top;
+    return top;             // возвращаем новую вершину
 }
 
 int getMainMenuChoice();
 
-void menu_GenerateNewStack(Stack** stack);
-void menu_PrintStack(Stack* stack);
-void menu_AppendElement(Stack** stack);
-void menu_PopElement(Stack** stack);
-void menu_SortMethod_1(Stack** stack);
-void menu_SortMethod_2(Stack** stack);
-void menu_IndividualTask(Stack** stack);
+void menu_GenerateNewStack(Stack** stack);      // Генерация стэка
+void menu_PrintStack(Stack* stack);             // Вывод стэка
+void menu_AppendElement(Stack** stack);         // Добавить элемент в стэк
+void menu_PopElement(Stack** stack);            // Удалить элемент из стэка
+void menu_SortMethod_1(Stack** stack);          // Сортировка первым методом (метода)
+void menu_SortMethod_2(Stack** stack);          // Сортировка вторым методом
+void menu_IndividualTask(Stack** stack);        // Индивидуальное задание
 
-// safe input functions
+// Функции защищённого ввода (см первую лабу)
 int rangeReadInt(int minimal, int maximal, const char* prompt);
 void flush_stdin();
 
@@ -126,32 +139,37 @@ int getMainMenuChoice()
     return choice;
 }
 
+// Генерация стэка
 void menu_GenerateNewStack(Stack** stack)
 {
     printf("*** Generating new stack ***\n\n");
-    int size = rangeReadInt(1, INT_MAX, "Specify stack size: ");
+    int size = rangeReadInt(1, INT_MAX, "Specify stack size: ");    // Спрашиваем размер
 
     while (size--)
-        *stack = push(*stack, rand() % 50 - 25);
+        *stack = push(*stack, rand() % 50 - 25);    // генерируем стэк
 }
 
+// Вывод стэка
 void menu_PrintStack(Stack* stack)
 {
     print(stack);
 }
 
+// Добавление нового элемента
 void menu_AppendElement(Stack** stack)
 {
-    int element = rangeReadInt(INT_MIN, INT_MAX, "Specify value: ");
-    *stack = push(*stack, element);
+    int element = rangeReadInt(INT_MIN, INT_MAX, "Specify value: ");    // спрашиваем элемент
+    *stack = push(*stack, element); // добавляем
 }
 
+// Удаление элемента
 void menu_PopElement(Stack** stack)
 {
-    int dummy;
-    *stack = pop(*stack, &dummy);
+    int dummy;  // Временная переменная (нам обязательно надо куда-то положить значение из верхнего элемента стэка)
+    *stack = pop(*stack, &dummy);   // Удаляем
 }
 
+// Сортировка первым методом из методы
 void menu_SortMethod_1(Stack** stack)
 {
     if (!*stack)
@@ -182,6 +200,7 @@ void menu_SortMethod_1(Stack** stack)
     printf("Stack sorted using method 1.\n");
 }
 
+// Сортировка вторым методом из методы
 void menu_SortMethod_2(Stack** stack)
 {
     if (!*stack)
@@ -205,26 +224,27 @@ void menu_SortMethod_2(Stack** stack)
     printf("Stack sorted using method 2.\n");
 }
 
+// Индивидуальное задание
 void menu_IndividualTask(Stack** stack)
 {
     printf("*** INDIVIDUAL TASK ***\n\n");
     printf("Remove even numbers from stack.\n");
 
     Stack* prev = nullptr, *cur = *stack;
-    while (cur != nullptr) // while (cur) is also a possible option
-        if (cur->value % 2 == 0)    // it should be removed
+    while (cur != nullptr) // Пока мы не дошли до конца стэка
+        if (cur->value % 2 == 0)    // Если текущий элемент чётный, его надо удалить
         {
-            Stack* tmp = cur->next;
-            if (prev != nullptr)    // This is not the first element in stack
-                prev->next = tmp;   // Moving pointer from previous element to get current element around
-            else                    // This is the first element in stack
-                *stack = tmp;       // Then we just should move the beginning of the stack forward
+            Stack* tmp = cur->next; // Запоминаем адрес следующего элемента
+            if (prev != nullptr)    // Если у нас есть адрес предыдущего элемента
+                prev->next = tmp;   // То нужно связать предыдущий элемент с элементом следующим за текущим
+            else                    // Если адреса нету, то мы сейчас на вершине стэка
+                *stack = tmp;       // Значит, нам просто нужно опустить вершину пониже
 
-            delete cur;             // Delete unnecessary element
-            cur = tmp;              // Move current pointer
-        } else {
-            prev = cur;             // Nothing should happen
-            cur = cur->next;        // Just moving on
+            delete cur;             // Удаляем текущий элемент
+            cur = tmp;              // И двигаемся дальше по стэку
+        } else {                    // Ну а если элемент был нечётным
+            prev = cur;             // То ничего не должно случиться
+            cur = cur->next;        // Просто двигаемся дальше
         }
 
     printf("Done!\n");
