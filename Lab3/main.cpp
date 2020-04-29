@@ -8,15 +8,24 @@
 
 using namespace std;
 
+/// Максимальная длина для названия груза
 const int TITLE_LEN = 50;
+
+/// Имя файла с базой данных
 const char DATABASE_FILENAME[] = "database.dat";
 
+/// Описание структуры даты
 struct Date
 {
-    unsigned year;
+    /// Год
+    unsigned year; 
+    /// Месяц
     unsigned month;
+    /// День
     unsigned day;
 };
+
+// Функция для получения текущей даты (для индивидуального задания)
 Date currentDate()
 {
     time_t t = time(nullptr);
@@ -28,35 +37,61 @@ Date currentDate()
     return date;
 }
 
+// Описание структуры груза
 struct Cargo
 {
+    // Название
     char title[TITLE_LEN];
+
+    // Количество
     unsigned quantity;
+
+    // Цена одной единицы
     unsigned cost;
+
+    // Дата поступления
     Date income_date;
 };
 
-
+// Функция выбора опции меню
 int getMainMenuChoice();
 
-void menu_CreateNewRecord();
-void menu_ShowAllRecords();
-void menu_CorrectRecord();
-void menu_LinearSearch();
-void menu_SelectionSort();
-void menu_QuickSort();
-void menu_BinarySearch();
-void menu_IndividualTask();
+void menu_CreateNewRecord();    // Создание новой записи
+void menu_ShowAllRecords();     // Просмотр всех записей
+void menu_CorrectRecord();      // Исправление записи
+void menu_LinearSearch();       // Линейный поиск среди грузов
+void menu_SelectionSort();      // Сортировка выбором
+void menu_QuickSort();          // Быстрая сортировка
+void menu_BinarySearch();       // Бинарный поиск среди грузов
+void menu_IndividualTask();     // Индивидуальное задание
 
+/// \brief Функция для сортировки выбором
+/// \param array - Указатель на массив для сортировки
+/// \param size  - Размер массива
 void selectionSort(Cargo* array, unsigned size);
+
+/// \brief Функция быстрой сортировки
+/// \param array - Указатель на массив для сортировки
+/// \param left  - Левая граница диапазона, который сейчас будет рассматриваться
+/// \param right - Правая граница диапазона 
 void quickSort(Cargo* array, int left, int right);
+
+/// \brief Функция для поиска элемента в массиве
+/// \param array - Массив, в котором будем искать
+/// \param size  - Размер массива
+/// \param title - Название элемента, который будем искать
+/// \return int Индекс элемента, если найдёт. Иначе - минус 1.
 int binarySearch(Cargo* array, unsigned size, const char title[]);
 
+/// \brief Функция для чтения информации про груз
 void readCargo(Cargo& cargo);
+
+/// \brief Функция для вывода инфы про груз
 void printCargo(Cargo cargo);
 
 
-// Functions for files
+// Функции для работы с файлами
+// Абсолютно такие же, как и в первой лабе
 void createFile(const char filename[]);
 void removeFile(const char filename[]);
 void appendToFile(const char filename[], const char* data, unsigned size);
@@ -64,11 +99,16 @@ void writeToFile(const char filename[], const char* data, unsigned size);
 unsigned readFile(const char filename[], char** buffer, unsigned maxSize = 0);
 unsigned filelength(FILE* file);
 
-// Functions for safe input
+// Функции для безопасного ввода тоже такие, как и в первой лабе
 int rangeReadInt(int minimal, int maximal, const char* prompt);
 int safeReadString(char* buffer, unsigned maxLength);
 void flush_stdin();
 
+
+/// \brief Функция для форматированного ввода даты
+/// Дата вводится с точками, в формате "ГГГГ.ММ.ДД"
+/// \param prompt - строка приглашением написать дату (как в rangeReadInt)
+/// \return Прочитанный объект даты
 Date promptDate(const char* prompt);
 
 int main()
@@ -121,6 +161,8 @@ int getMainMenuChoice()
     return choice;
 }
 
+// Функция создания новой записи.
+// В основном, тут всё то же самое, как и в первой лабе
 void menu_CreateNewRecord()
 {
     printf("*** Creating new record ***\n");
@@ -129,6 +171,7 @@ void menu_CreateNewRecord()
     appendToFile(DATABASE_FILENAME, (char*)&cargo, sizeof(cargo));
 }
 
+// Просмотр всех записей, как в первой лабе
 void menu_ShowAllRecords()
 {
     Cargo* cargos = nullptr;
@@ -141,6 +184,7 @@ void menu_ShowAllRecords()
     delete[] cargos;
 }
 
+// Исправление существующей записи, как в первой лабе
 void menu_CorrectRecord()
 {
     Cargo* cargos = nullptr;
@@ -161,52 +205,63 @@ void menu_CorrectRecord()
     delete[] cargos;
 }
 
+// Линейный поиск груза в массиве
 void menu_LinearSearch()
 {
+    // Читаем файл с данными, как и раньше (см. первую лабу для подробностей)
     Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
-    printf("Specify title to search for: ");
+    printf("Specify title to search for: ");    // Запрашиваем у пользователя название для поиска
     char title[50];
     safeReadString(title, 49);
 
-    printf("Searching for items with title: %s\n", title);
+    printf("Searching for items with title: %s\n", title); 
 
-    bool found = false;
-    for (unsigned i = 0; i < size; ++i)
-        if (strcmp(title, cargos[i].title) == 0)
-        {
+    bool found = false; // флаг что нашли хоть одного
+    for (unsigned i = 0; i < size; ++i)             // Проходимся по массиву с грузами
+        if (strcmp(title, cargos[i].title) == 0)    // Если у груза такое же название
+        {                                           // То выводим его
             printCargo(cargos[i]);
-            found = true;
+            found = true;                           // И помечаем, что нашли хотя бы один
         }
-    if (!found) printf("No items found.\n");
+    if (!found) printf("No items found.\n");        // Если не нашли ничего - сообщаем
 
     delete[] cargos;
 }
 
+// Функция вызова сортировки выбором
 void menu_SelectionSort()
 {
+    // читаем данные
     Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
+    // Выводим массив, как он выглядел раньше
     printf("File state before Selection sort:\n");
     for (unsigned i = 0; i < size; ++i)
         printf("%3d:\t%s\n", i, cargos[i].title);
     printf("\n");
 
+    // Сортируем
     selectionSort(cargos, size);
 
+    // Показываем, что получилось
     printf("File state after Selection sort:\n");
     for (unsigned i = 0; i < size; ++i)
         printf("%3d:\t%s\n", i, cargos[i].title);
     printf("\n");
 
+    // Записываем результат в файл
     writeToFile(DATABASE_FILENAME, (char*)cargos, size * sizeof(Cargo));
     delete[] cargos;
 }
 
+// Функция вызова быстрой сортировки
+// Внутри аналогична предыдущей, только вызывается быстрая сортировка
+// вместо сортировки выбором
 void menu_QuickSort()
 {
     Cargo* cargos = nullptr;
@@ -227,61 +282,67 @@ void menu_QuickSort()
     delete[] cargos;
 }
 
+// Функция вызова бинарного поиска
 void menu_BinarySearch()
 {
+    // Читаем данные
     Cargo* cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
     printf("Specify title to search for: ");
     char title[50];
-    safeReadString(title, 49);
+    safeReadString(title, 49);  // Запрашиваем название груза для поиска
 
-    int index = binarySearch(cargos, size, title);
-    if (index != -1)
-        printCargo(cargos[index]);
-    else
-        printf("No items found.\n");
+    int index = binarySearch(cargos, size, title);  // Ищем его
+    if (index != -1)                // если нашли
+        printCargo(cargos[index]);  // то выводим
+    else                                // если не нашли,
+        printf("No items found.\n");    // то сообщаем об этом
 
     delete[] cargos;
 }
 
+// Индивидуальное задание
 void menu_IndividualTask()
 {
+    // Читаем данные
     Cargo *cargos = nullptr;
     unsigned bytes = readFile(DATABASE_FILENAME, (char**)&cargos);
     unsigned size = bytes / sizeof(Cargo);
 
     printf("Alphabetical order of cargos with the cost larger than 100 000.\n");
 
-    quickSort(cargos, 0, size - 1);
+    quickSort(cargos, 0, size - 1); // На всякий случай сортируем их в алфавитном порядке
 
-    bool found = false;
+    bool found = false; // флаг, что нашли хотя бы подходящий груз
 
-    Date today = currentDate();
-    printf("Today is %02d.%02d.%d\n", today.day, today.month, today.year);
+    Date today = currentDate(); // берём текущую дату
+    printf("Today is %02d.%02d.%d\n", today.day, today.month, today.year);  // выводим её для проверки
 
-    for (unsigned i = 0; i < size; ++i)
-        if (cargos[i].cost * cargos[i].quantity > 100000)
+    for (unsigned i = 0; i < size; ++i)                             // проходимся по всему массиву
+        if (cargos[i].cost * cargos[i].quantity > 100000)           // если общая стоимость груза больше 100000
         {
-            unsigned income_days = cargos[i].income_date.year * 365 +
+            unsigned income_days = cargos[i].income_date.year * 365 +   // Считаем кол-во дней от рождества христова до прибытия груза на склад
                                    cargos[i].income_date.month * 31 +
                                    cargos[i].income_date.day;
-            unsigned today_days = today.year * 365 + today.month * 31 + today.day;
+            unsigned today_days = today.year * 365 + today.month * 31 + today.day;  // считаем кол-во дней от РХ до текущего дня
 
-            if (today_days - income_days > 31)
+            if (today_days - income_days > 31)  // если разница между этими количествами больше месяца
             {
-                printCargo(cargos[i]);
-                found = true;
+                printCargo(cargos[i]); // Выводим груз
+                found = true;           // И запоминаем, что нашли хотя бы один
             }
         }
 
-    if (!found)
+    if (!found)                         // Если ничего не нашли, так и скажем
         printf("No cargos found.\n");
 
     delete[] cargos;
 }
 
+// Сортировка выбором
+// Всё по методе, в общем-то
 void selectionSort(Cargo* array, unsigned size)
 {
     for (unsigned i = 0; i < size - 1; ++i)
@@ -299,11 +360,12 @@ void selectionSort(Cargo* array, unsigned size)
     }
 }
 
+// Быстрая сортировка, тоже по методе
 void quickSort(Cargo* array, int left, int right)
 {
-    char buffer[TITLE_LEN + 1]; // buffer for comparison
+    char buffer[TITLE_LEN + 1]; // буфер для сравнения
     int l = left, r = right;
-    strcpy(buffer, array[(l + r) / 2].title);
+    strcpy(buffer, array[(l + r) / 2].title);   // кладём сюда название элемента в середине отрезка
     do {
         while (strcmp(array[l].title, buffer) < 0) ++l;
         while (strcmp(array[r].title, buffer) > 0) --r;
@@ -320,6 +382,7 @@ void quickSort(Cargo* array, int left, int right)
     if (l < right) quickSort(array, l, right);
 }
 
+// Бинарный поиск, тоже по методе, описан был во второй лабе
 int binarySearch(Cargo* array, unsigned size, const char title[])
 {
     int result = -1;    // -1 means "nothing was found"
@@ -336,6 +399,7 @@ int binarySearch(Cargo* array, unsigned size, const char title[])
     return result;
 }
 
+// Функция чтения инфы про груз
 void readCargo(Cargo& cargo)
 {
     printf("*** reading cargo info ***\n\n");
@@ -346,6 +410,7 @@ void readCargo(Cargo& cargo)
     cargo.income_date = promptDate("Income date (YYYY.MM.DD): ");
 }
 
+// Вывод инфы про груз
 void printCargo(Cargo cargo)
 {
     printf("Title:       %s\n", cargo.title);
@@ -357,6 +422,7 @@ void printCargo(Cargo cargo)
     printf("\n");
 }
 
+// Функции для работы с файлами разобраны в лабе 1
 void createFile(const char filename[])
 {
     FILE* file = fopen(filename, "wb");
@@ -466,18 +532,20 @@ void flush_stdin()
     while ((c = getc(stdin)) != '\n' && c != EOF);
 }
 
+// Функция чтения даты
+// Аналогична функции rangeReadInt
 Date promptDate(const char* prompt)
 {
     bool ok = false;
     Date result;
     do {
-        printf("%s", prompt);
-        ok = scanf("%d.%d.%d", &result.day, &result.month, &result.year);
-        flush_stdin();
-        ok &= result.day > 0 && result.day < 32;
-        ok &= result.month > 0 && result.month < 13;
+        printf("%s", prompt);   // выводим приглашение
+        ok = scanf("%d.%d.%d", &result.day, &result.month, &result.year);  // пытаемся прочесть
+        flush_stdin();                                                      // удаляем лишнее из буфера
+        ok &= result.day > 0 && result.day < 32;                            // валидируем
+        ok &= result.month > 0 && result.month < 13;                        // как следует
         ok &= result.year > 1970 && result.year < 2021;
-        if (!ok)
+        if (!ok)                                                            // а дальше как rangeReadInt (см лабу 1)
             printf("Please, input a valid date in format DD.MM.YYYY\n");
     } while (!ok);
     return result;
