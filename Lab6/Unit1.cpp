@@ -13,40 +13,45 @@ __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
     , root(NULL)
 {
-    // setup cols
+    // Задаём заголовки в таблице
     this->sourceStringGrid->Cells[0][0] = "Key";
     this->sourceStringGrid->Cells[1][0] = "Value";
     updateTreeView();
 }
 
+// Функция проверки дерева на инициализацию
 bool TForm1::treeIsInited() const
 {
     return this->root != NULL;
 }
 
+// Функция построения представления дерева в виде текста
 void TForm1::updateTreeView()
 {
-    this->PrintArea->Lines->Clear();
-    if (!treeIsInited()) {
+    this->PrintArea->Lines->Clear();    // Очищаем текущее значение
+    if (!treeIsInited()) {              // Если дерева нету, то и выводить нечего
         this->PrintArea->Lines->Add("Tree is not inited.");
         return;
     }
 
-    std::vector<String> rows = GetTreeView(this->root);
-    for (size_t i = 0; i < rows.size(); ++i)
+    std::vector<String> rows = GetTreeView(this->root); // Иначе строим представление
+    for (size_t i = 0; i < rows.size(); ++i)            // и выводим его на форму
         this->PrintArea->Lines->Add(rows[i]);
 }
 
+// Очистка поля вывода
 void TForm1::clearOutput()
 {
     this->searchResultsArea->Lines->Clear();
 }
 
+// Добавление строки в поле вывода
 void TForm1::printToOutput(const String &str)
 {
     this->searchResultsArea->Lines->Add(str);
 }
 
+// Обход дерева
 void TForm1::preOrderTraversal(BSUIR::Tree *start)
 {
     if (!start) return;
@@ -57,6 +62,7 @@ void TForm1::preOrderTraversal(BSUIR::Tree *start)
     this->preOrderTraversal(start->right);
 }
 
+// Обход дерева
 void TForm1::postOrderTraversal(BSUIR::Tree *node)
 {
     if (!node) return;
@@ -67,6 +73,7 @@ void TForm1::postOrderTraversal(BSUIR::Tree *node)
     this->printToOutput(str);
 }
 
+// Обход дерева
 void TForm1::inOrderTraversal(BSUIR::Tree *node)
 {
     if (!node) return;
@@ -78,6 +85,7 @@ void TForm1::inOrderTraversal(BSUIR::Tree *node)
     this->inOrderTraversal(node->right);
 }
 
+// Очистка таблицы для ввода
 void TForm1::clearInput()
 {
     int size = sourceStringGrid->RowCount;
@@ -88,6 +96,7 @@ void TForm1::clearInput()
     }
 }
 
+// Получение значений из таблицы в виде массива структур
 BSUIR::RecordList TForm1::getListFromInput()
 {
     int size = this->sourceStringGrid->RowCount;
@@ -95,8 +104,8 @@ BSUIR::RecordList TForm1::getListFromInput()
     for (int i = 1; i < size && !this->sourceStringGrid->Cells[0][i].IsEmpty(); ++i)
         realSize++;
 
-    BSUIR::RecordList list = BSUIR::CreateRecordList(realSize);
-    for (int i = 1; i <= realSize; ++i)
+    BSUIR::RecordList list = BSUIR::CreateRecordList(realSize); // Создаём массив нужного размера
+    for (int i = 1; i <= realSize; ++i)                         // И по очереди кладём туда значения
     {
         list.data[i - 1].key = StrToInt(sourceStringGrid->Cells[0][i]);
         list.data[i - 1].caption = sourceStringGrid->Cells[1][i];
@@ -107,39 +116,46 @@ BSUIR::RecordList TForm1::getListFromInput()
 
 //---------------------------------------------------------------------------
 
+/// Инициализация дерева
+/// По сути, тут всё из методы
 BSUIR::Tree* BSUIR::InitTree(int value, String caption)
 {
-    Tree* root = new Tree;
-    root->value = value;
+    Tree* root = new Tree;  // создаём вершину
+    root->value = value;    // заполняем значения
     root->caption = caption;
     root->left = root->right = NULL;
-    return root;
+    return root;            // возвращаем
 }
 
+
+// Удаление дерева
+// Тоже, в общем-то, из методы
 void BSUIR::DeleteTree(BSUIR::Tree **root)
 {
     if (*root != NULL)
     {
-        DeleteTree(&(*root)->left);
+        DeleteTree(&(*root)->left);     // рекурсивно спускаемся до листьев и удаляем
         DeleteTree(&(*root)->right);
         delete *root;
         *root = NULL;
     }
 }
 
+// Добавление элемента в дерево
+// Тоже из методы
 void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value, String caption)
 {
     Tree *cur = root, *prev = NULL;
-    while (cur)
+    while (cur)             // Ищем, куда нужно вставить
     {
-        if (cur->value == value) break;
+        if (cur->value == value) break; // если такой ключ уже есть, то ничего не делаем
         prev = cur;
         if (value > cur->value)
             cur = cur->right;
         else
             cur = cur->left;
     }
-    if (!cur)
+    if (!cur)       // если дерево было пустым, то создаём новое
     {
         cur = InitTree(value, caption);
         if (value > prev->value)
@@ -149,12 +165,15 @@ void BSUIR::InsertIntoTree(BSUIR::Tree *root, int value, String caption)
     }
 }
 
+// Рекурсивно получаем размер дерева
 int BSUIR::GetTreeSize(BSUIR::Tree *root)
 {
-    if (root == NULL) return 0;
-    return 1 + GetTreeSize(root->left) + GetTreeSize(root->right);
+    if (root == NULL) return 0; // Если текущей вершины нет, то возвращаем 1
+    return 1 + GetTreeSize(root->left) + GetTreeSize(root->right); // Иначе возвращаем 1 + размер правого поддерева + размер левого
 }
 
+// Поиск элемента в дереве по ключу
+// Тоже из методы
 BSUIR::Tree* BSUIR::FindNodeByKey(BSUIR::Tree *root, int key)
 {
     Tree *ptr = root;
@@ -169,6 +188,9 @@ BSUIR::Tree* BSUIR::FindNodeByKey(BSUIR::Tree *root, int key)
     return ptr;
 }
 
+// Удаление элемента из дерева
+// Код из методы, я понятнее вряд ли объясню
+// Разве что тут переменные понятнее названы
 bool BSUIR::RemoveFromTree(BSUIR::Tree **root, int key)
 {
     Tree *toBeRemoved, *prevRemoved;
@@ -219,6 +241,8 @@ bool BSUIR::RemoveFromTree(BSUIR::Tree **root, int key)
     return true;
 }
 
+// Получение представления дерева в виде текста
+// Рекурсивно ходим по дереву и составляем строки
 std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool isLeft)
 {
    std::vector<String> res;
@@ -244,31 +268,36 @@ std::vector<String> BSUIR::GetTreeView(BSUIR::Tree *root, String prefix, bool is
    return res;
 }
 
+// Функция для подсчёта листьев
 int BSUIR::CountLeaves(BSUIR::Tree *root)
 {
     if (!root) return 0;
-    if (root->left == NULL && root->right == NULL) return 1;
-    return CountLeaves(root->left) + CountLeaves(root->right);
+    if (root->left == NULL && root->right == NULL) return 1;    // если мы в листке, возвращаем 1
+    return CountLeaves(root->left) + CountLeaves(root->right);  // Иначе спускаемся в поддеревья
 }
 
+// Функция для создания массива структур
 BSUIR::RecordList BSUIR::CreateRecordList(int size)
 {
-    RecordList list;
-    list.size = size;
-    list.data = new Record[size];
-    return list;
+    RecordList list;    // Создаём массив
+    list.size = size;   // задаём размер
+    list.data = new Record[size];   // выделяем память
+    return list;    // возвращаем
 }
 
+// Функция для удаления массива
 void BSUIR::RemoveRecordList(RecordList &list)
 {
-    list.size = 0;
+    list.size = 0;  // уменьшаем размер
     if (list.data != NULL)
     {
-        delete list.data;
+        delete list.data;   // удаляем массив
         list.data = NULL;
     }
 }
 
+// Функция сортировки массива
+// Тут сортировка выбором, как в прошлых лабах была
 void BSUIR::Sort(BSUIR::RecordList list)
 {
     int size = list.size;
@@ -287,6 +316,8 @@ void BSUIR::Sort(BSUIR::RecordList list)
     }
 }
 
+// Создание дерева на основе массива структур
+// Код из методы, как создать дерево из отсортированных значений
 BSUIR::Tree *BSUIR::CreateTree(BSUIR::RecordList list, int l, int r)
 {
     if (r == -1) r = list.size;
@@ -301,6 +332,9 @@ BSUIR::Tree *BSUIR::CreateTree(BSUIR::RecordList list, int l, int r)
     return node;
 }
 
+// Создание массива структур на основе дерева
+// Обходим дерево в порядке возрастания ключа и добавляем по очереди
+// элементы в массив
 int BSUIR::CreateListFromTree(BSUIR::RecordList list, BSUIR::Tree *root, int lastElement)
 {
     if (root == NULL) return lastElement;
@@ -314,29 +348,31 @@ int BSUIR::CreateListFromTree(BSUIR::RecordList list, BSUIR::Tree *root, int las
     return lastElement;
 }
 
+// Обработка кнопки добавления нового элемента
 void __fastcall TForm1::AppendButtonClick(TObject *Sender)
 {
     ((void)Sender);
-    int value = StrToInt(this->newKeyEdit->Text);
-    String caption = this->newValueEdit->Text;
-    if (!treeIsInited())
-       root = BSUIR::InitTree(value, caption);
-    else
-        BSUIR::InsertIntoTree(root, value, caption);
+    int value = StrToInt(this->newKeyEdit->Text);   // берём значение ключа
+    String caption = this->newValueEdit->Text;      // и значение значения ://
+    if (!treeIsInited())                            // Если дерева ещё не было
+       root = BSUIR::InitTree(value, caption);      // То создаём новое
+    else                                            // Иначе
+        BSUIR::InsertIntoTree(root, value, caption);// Добавляем к текущему
 
-    this->updateTreeView();
+    this->updateTreeView();                         // Обновляем представление
 }
 //---------------------------------------------------------------------------
 
+// обработка кнопки поиска элемента в дереве
 void __fastcall TForm1::findAndPrintButtonClick(TObject *Sender)
 {
     ((void)Sender);
 
-    this->searchResultsArea->Lines->Clear();
+    this->searchResultsArea->Lines->Clear();                // очищаем вывод
 
-    int key = StrToInt(this->findKeyEdit->Text);
-    BSUIR::Tree *node = BSUIR::FindNodeByKey(root, key);
-    if (node)
+    int key = StrToInt(this->findKeyEdit->Text);            // берём ключ для поиска из поля
+    BSUIR::Tree *node = BSUIR::FindNodeByKey(root, key);    // Ищем ключ в дереве
+    if (node)                                               // Если нашли, то выводим
     {
         String firstRow = "Found:";
         String secondRow = "Key:\t" + IntToStr(node->value);
@@ -346,20 +382,21 @@ void __fastcall TForm1::findAndPrintButtonClick(TObject *Sender)
         this->searchResultsArea->Lines->Add(thirdRow);
     }
     else
-    {
+    {                                               // Либо сообщаем, что не нашли
         this->searchResultsArea->Lines->Add("No such key in tree :c");
     }
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки "найти и удалить"
 void __fastcall TForm1::findAndEraseButtonClick(TObject *Sender)
 {
     ((void)Sender);
 
-    this->searchResultsArea->Lines->Clear();
+    this->searchResultsArea->Lines->Clear();            // Очищаем вывод
 
-    int key = StrToInt(this->findKeyEdit->Text);
-    bool result = BSUIR::RemoveFromTree(&root, key);
+    int key = StrToInt(this->findKeyEdit->Text);        // берём ключ
+    bool result = BSUIR::RemoveFromTree(&root, key);    // удаляем по ключу
 
     String output;
     if (result)
@@ -372,6 +409,7 @@ void __fastcall TForm1::findAndEraseButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки с обходом дерева
 void __fastcall TForm1::preorderButtonClick(TObject *Sender)
 {
     ((void)Sender);
@@ -387,6 +425,7 @@ void __fastcall TForm1::preorderButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки с обходом дерева
 void __fastcall TForm1::postorderButtonClick(TObject *Sender)
 {
     ((void)Sender);
@@ -402,6 +441,7 @@ void __fastcall TForm1::postorderButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки с обходом дерева
 void __fastcall TForm1::inorderButtonClick(TObject *Sender)
 {
     ((void)Sender);
@@ -417,6 +457,7 @@ void __fastcall TForm1::inorderButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки с удалением дерева
 void __fastcall TForm1::deleteButtonClick(TObject *Sender)
 {
     ((void)Sender);
@@ -427,28 +468,30 @@ void __fastcall TForm1::deleteButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки с ребалансировкой дерева
 void __fastcall TForm1::rebalanceButtonClick(TObject *Sender)
 {
     ((void)Sender);
-    this->clearOutput();
+    this->clearOutput();                // Очищаем вывод
     if (this->root == NULL)
     {
         this->printToOutput("Can't rebalance empty tree");
         return;
     }
 
-    int treeSize = BSUIR::GetTreeSize(root);
-    BSUIR::RecordList list = BSUIR::CreateRecordList(treeSize);
-    BSUIR::CreateListFromTree(list, root);
-    BSUIR::Sort(list);
-    BSUIR::DeleteTree(&root);
-    root = BSUIR::CreateTree(list);
+    int treeSize = BSUIR::GetTreeSize(root);                    // Получаем размер дерева
+    BSUIR::RecordList list = BSUIR::CreateRecordList(treeSize); // Создаём массив структур такого размера
+    BSUIR::CreateListFromTree(list, root);                      // Заполняем его элементами из дерева
+    BSUIR::Sort(list);                                          // Сортируем
+    BSUIR::DeleteTree(&root);                                   // Удаляем дерево
+    root = BSUIR::CreateTree(list);                             // Создаём новое дерево на основе массива
 
-    this->printToOutput("The tree was rebalanced...");
+    this->printToOutput("The tree was rebalanced...");          // Выводим
     this->updateTreeView();
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки для очистки таблицы
 void __fastcall TForm1::clearTableButtonClick(TObject *Sender)
 {
     ((void)Sender);
@@ -456,17 +499,19 @@ void __fastcall TForm1::clearTableButtonClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки для инициализации дерева значениями из таблицы
 void __fastcall TForm1::initTreeButtonClick(TObject *Sender)
 {
     ((void)Sender);
-    BSUIR::RecordList list = this->getListFromInput();
-    BSUIR::Sort(list);
-    if (this->treeIsInited()) BSUIR::DeleteTree(&root);
-    this->root = BSUIR::CreateTree(list);
-    this->updateTreeView();
+    BSUIR::RecordList list = this->getListFromInput();  // Получаем значения из таблицы
+    BSUIR::Sort(list);                                  // сортируем
+    if (this->treeIsInited()) BSUIR::DeleteTree(&root); // Если дерево какое-то было уже, то удаляем
+    this->root = BSUIR::CreateTree(list);               // Создаём новое на основе массива
+    this->updateTreeView();                             // Выводим
 }
 //---------------------------------------------------------------------------
 
+// Обработка кнопки для подсчёта листьев
 void __fastcall TForm1::leavesButtonClick(TObject *Sender)
 {
     ((void)Sender);
