@@ -22,8 +22,8 @@ Date currentDate()
     tm time = *localtime(&t);
     Date date;
     date.day = time.tm_mday;
-    date.month = time.tm_mon;
-    date.year = time.tm_year;
+    date.month = time.tm_mon + 1;
+    date.year = 1900 + time.tm_year;
     return date;
 }
 
@@ -258,11 +258,22 @@ void menu_IndividualTask()
 
     bool found = false;
 
+    Date today = currentDate();
+    printf("Today is %02d.%02d.%d\n", today.day, today.month, today.year);
+
     for (unsigned i = 0; i < size; ++i)
         if (cargos[i].cost * cargos[i].quantity > 100000)
         {
-            printCargo(cargos[i]);
-            found = true;
+            unsigned income_days = cargos[i].income_date.year * 365 +
+                                   cargos[i].income_date.month * 31 +
+                                   cargos[i].income_date.day;
+            unsigned today_days = today.year * 365 + today.month * 31 + today.day;
+
+            if (today_days - income_days > 31)
+            {
+                printCargo(cargos[i]);
+                found = true;
+            }
         }
 
     if (!found)
