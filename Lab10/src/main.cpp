@@ -1,6 +1,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -13,7 +15,7 @@ enum class GraphType
     CounterFunctional
 };
 
-GraphType getType(const vector<vector<int>> &graph);
+GraphType getType(const vector<vector<int>>& graph);
 
 int main()
 {
@@ -25,25 +27,50 @@ int main()
         fin.open("test-in-" + std::to_string(test) + ".txt");
         fout.open("test-out-" + std::to_string(test) + ".txt");
 
-        int nodesCnt, edgesCnt;
-        fin >> nodesCnt >> edgesCnt;
-        vector<vector<int>> graph(nodesCnt);
-
-        for (int i = 0; i < edgesCnt; ++i)
+        if (!fin.is_open() || !fout.is_open())
         {
-            int a, b;
-            fin >> a >> b;
+            std::cout << "Can't open files for test #" << test << std::endl;
+            continue;
+        }
+
+        vector<vector<int>> graph;
+        bool broken = false;
+
+        int a, b;
+        fin >> a >> b;
+        while (!fin.eof())
+        {
+            if (a < 1 || b < 1)
+            {
+                cout << "Test #" << test << " ";
+                cout << "Node number should be a positive number" << endl;
+                broken = true;
+                break;
+            }
+
+            if (graph.size() < max(a, b))
+                graph.resize(max(a, b));
+
             --a, --b;
             graph[a].push_back(b);
+
+            fin >> a >> b;
+        }
+
+        if (broken)
+        {
+            fin.close();
+            fout.close();
+            continue;
         }
 
         std::string output;
 
         switch (getType(graph)) {
-            case GraphType::Common: output = "common"; break;
-            case GraphType::Functional: output = "functional"; break;
-            case GraphType::CounterFunctional: output = "counter-functional"; break;
-            default: output = "undefined";
+        case GraphType::Common: output = "common"; break;
+        case GraphType::Functional: output = "functional"; break;
+        case GraphType::CounterFunctional: output = "counter-functional"; break;
+        default: output = "undefined";
         }
 
         fout << output << endl;
@@ -54,14 +81,14 @@ int main()
     return 0;
 }
 
-GraphType getType(const vector<vector<int>> &graph)
+GraphType getType(const vector<vector<int>>& graph)
 {
     unsigned functionalNodes = 0;
 
     for (size_t i = 0; i < graph.size(); ++i)
         functionalNodes += graph[i].size() == 1;
 
-    if (functionalNodes == graph.size())
+    if (functionalNodes == graph.size() && functionalNodes > 0)
         return GraphType::Functional;
     if (functionalNodes == 0)
         return GraphType::CounterFunctional;
