@@ -1,10 +1,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
-const unsigned int kTestCasesNumber = 6;
+const unsigned int kTestCasesNumber = 7;
 
 enum class GraphType
 {
@@ -13,7 +14,7 @@ enum class GraphType
     CounterFunctional
 };
 
-GraphType getType(const vector<vector<int>> &graph);
+GraphType getType(const vector<vector<int>>& graph);
 
 int main()
 {
@@ -25,25 +26,59 @@ int main()
         fin.open("test-in-" + std::to_string(test) + ".txt");
         fout.open("test-out-" + std::to_string(test) + ".txt");
 
+        if (!fin.is_open() || !fout.is_open())
+        {
+            std::cout << "Can't open files for test #" << test << std::endl;
+            continue;
+        }
+
         int nodesCnt, edgesCnt;
         fin >> nodesCnt >> edgesCnt;
+
+        if (nodesCnt < 1)
+        {
+            std::cout << "Test #" << test << " ";
+            std::cout << "Number of nodes can't be less than 1, but given " << nodesCnt << std::endl;
+            fin.close();
+            fout.close();
+            continue;
+        }
+
         vector<vector<int>> graph(nodesCnt);
+
+        bool broken = false;
 
         for (int i = 0; i < edgesCnt; ++i)
         {
             int a, b;
             fin >> a >> b;
+
+            if (a < 1 || a > nodesCnt || b < 1 || b > nodesCnt)
+            {
+                std::cout << "Test #" << test << " ";
+                std::cout << "Node number should be in range from " << 1 << " to " << nodesCnt << std::endl;
+                broken = true;
+                break;
+            }
+
             --a, --b;
             graph[a].push_back(b);
+        }
+
+        if (broken)
+        {
+            fin.close();
+            fout.close();
+            continue;
         }
 
         std::string output;
 
         switch (getType(graph)) {
-            case GraphType::Common: output = "common"; break;
-            case GraphType::Functional: output = "functional"; break;
-            case GraphType::CounterFunctional: output = "counter-functional"; break;
-            default: output = "undefined";
+        case GraphType::Common: output = "common"; break;
+        case GraphType::Functional: output = "functional"; break;
+        case GraphType::CounterFunctional: output = "counter-functional"; break;
+        default: output = "undefined";
         }
 
         fout << output << endl;
@@ -54,7 +89,7 @@ int main()
     return 0;
 }
 
-GraphType getType(const vector<vector<int>> &graph)
+GraphType getType(const vector<vector<int>>& graph)
 {
     unsigned functionalNodes = 0;
 
