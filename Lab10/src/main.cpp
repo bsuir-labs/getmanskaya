@@ -1,10 +1,13 @@
 #include <fstream>
 #include <vector>
+#include <string>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
 /// Количество тестовых заданий
-const unsigned int kTestCasesNumber = 6;
+const unsigned int kTestCasesNumber = 7;
 
 // Возможные варианты графа
 // (надеюсь, я правильно понял всё)
@@ -30,25 +33,50 @@ int main()
         fin.open("test-in-" + std::to_string(test) + ".txt");
         fout.open("test-out-" + std::to_string(test) + ".txt");
 
-        int nodesCnt, edgesCnt;                 // Читаем тестовые данные из файла
-        fin >> nodesCnt >> edgesCnt;
-        vector<vector<int>> graph(nodesCnt);
-
-        for (int i = 0; i < edgesCnt; ++i)
+        if (!fin.is_open() || !fout.is_open())
         {
-            int a, b;
-            fin >> a >> b;
+            std::cout << "Can't open files for test #" << test << std::endl;
+            continue;
+        }
+
+        vector<vector<int>> graph;
+        bool broken = false;
+
+        int a, b;
+        fin >> a >> b;
+        while (!fin.eof())
+        {
+            if (a < 1 || b < 1)
+            {
+                cout << "Test #" << test << " ";
+                cout << "Node number should be a positive number" << endl;
+                broken = true;
+                break;
+            }
+
+            if (graph.size() < max(a, b))
+                graph.resize(max(a, b));
+
             --a, --b;
             graph[a].push_back(b);
+
+            fin >> a >> b;
+        }
+
+        if (broken)
+        {
+            fin.close();
+            fout.close();
+            continue;
         }
 
         std::string output;
 
-        switch (getType(graph)) {               // Получаем тип графа и в зависимости от него генерируем ответ
-            case GraphType::Common: output = "common"; break;
-            case GraphType::Functional: output = "functional"; break;
-            case GraphType::CounterFunctional: output = "counter-functional"; break;
-            default: output = "undefined";
+        switch (getType(graph)) {
+        case GraphType::Common: output = "common"; break;
+        case GraphType::Functional: output = "functional"; break;
+        case GraphType::CounterFunctional: output = "counter-functional"; break;
+        default: output = "undefined";
         }
 
         fout << output << endl; // Выводим ответ в файл
@@ -67,9 +95,9 @@ GraphType getType(const vector<vector<int>> &graph)
     for (size_t i = 0; i < graph.size(); ++i)
         functionalNodes += graph[i].size() == 1;
 
-    if (functionalNodes == graph.size())    // Если все вершины имеют ровно 1 исходящее ребро,
-        return GraphType::Functional;       // то граф функциональный
-    if (functionalNodes == 0)               // Если ни одной, то контр-функциональный
+    if (functionalNodes == graph.size() && functionalNodes > 0)
+        return GraphType::Functional;
+    if (functionalNodes == 0)
         return GraphType::CounterFunctional;
     return GraphType::Common;               // А иначе, ни тот, ни другой
 }
