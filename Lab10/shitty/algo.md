@@ -9,61 +9,61 @@
 
 ### Вход
 
-[img0]
+![img0](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img0.png)
 
 ### Шаг 1
 
 Создаём и заполняем множество рёбер графа
 
-[img1]
+![img1](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img1.png)
 
 ### Шаг 2
 
 Создаём и заполняем множество непроверенных вершин
 
-[img2]
+![img2](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img2.png)
 
 ### Шаг 3
 
 Создаём множество, которое будет содержать вершины, для которых выполняется условие функциональности
 
-[img3]
+![img3](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img3.png)
 
 ### Шаг 4
 
 Из множества непроверенных вершин достаём вершину (A) и помещаем её в переменную CurrentNode. Удаляем эту вершину из множества NotChecked.
 
-[img4]
+![img4](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img4.png)
 
 ### Шаг 5
 
 Проверяем условие функциональности. Полустепень исхода вершины равна 1. Помещаем вершину в множество FunctionalNodes.
 
-[img5]
+![img5](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img5.png)
 
 ### Шаг 6
 
 Из множества NotChecked достаём вершину (B) и помещаем её в переменную CurrentNode. Удаляем эту вершину из множества NotChecked. Так как условие функциональности выполняется, помещаем вершину (В) в множество FunctionalNodes.
 
-[img6]
+![img6](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img6.png)
 
 ### Шаг 7
 
 Из множества NotChecked достаём вершину (C) и помещаем её в переменную CurrentNode. Удаляем эту вершину из множества NotChecked. Так как условие функциональности выполняется, помещаем вершину (C) в множество FunctionalNodes.
 
-[img7]
+![img7](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img7.png)
 
 ### Шаг 8
 
 Из множества NotChecked достаём вершину (D) и помещаем её в переменную CurrentNode. Удаляем эту вершину из множества NotChecked. Так как условие функциональности выполняется, помещаем вершину (D) в множество FunctionalNodes.
 
-[img8]
+![img8](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img8.png)
 
 ### Шаг 9
 
 Из множества NotChecked достаём вершину (Е) и помещаем её в переменную CurrentNode. Удаляем эту вершину из множества NotChecked. Так как условие функциональности выполняется, помещаем вершину (Е) в множество FunctionalNodes.
 
-[img9]
+![img9](https://github.com/bsuir-labs/getmanskaya/raw/master/Lab10/shitty/exp/img9.png)
 
 ### Шаг 10
 
